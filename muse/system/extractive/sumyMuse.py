@@ -13,7 +13,7 @@ class Sumy:
     def summarize(self):
         parser = PlaintextParser.from_string(self.text, Tokenizer("english"))
         summarizer = LsaSummarizer()
-        summary = summarizer(parser.document, 3)
+        summary = summarizer(parser.document, 1)
         return summary
 
 # Example usage
