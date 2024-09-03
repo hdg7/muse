@@ -14,15 +14,17 @@ RUN pip3 install --upgrade pip --break-system-packages
 
 #Installing Ollama
 RUN curl -fsSL https://ollama.com/install.sh | sh
-RUN pip3 install ipyflex plotly
+RUN pip3 install ipyflex plotly --break-system-packages
 
 WORKDIR /home/user/
 RUN mkdir /home/user/outputs
 COPY muse /home/user/muse
 RUN mkdir /root/models
 
-#Installing the python mlighter-utils
-RUN muse/install.bash
+#Installing
+COPY install.bash /home/user/install.bash
+COPY requirements.txt /home/user/requirements.txt
+RUN bash install.bash
 
 ADD initScript.bash /home/user/initScript.bash 
 WORKDIR /home/user/muse
