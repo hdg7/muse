@@ -6,7 +6,6 @@ def setup():
     try:
         import muse
     except ImportError:
-        # check if os.envioron['PYTHONPATH'] is set
         if "MUSE_HOME" in os.environ:
             sys.path.append(os.environ["MUSE_HOME"])
         elif "HOME" in os.environ:
