@@ -1,4 +1,4 @@
-gensim
+gensim=3.6.0
 sumy
 nltk
 jupyter
