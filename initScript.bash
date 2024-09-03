@@ -37,6 +37,10 @@ then
 		echo $i
 	done
 	echo "Model fetched"
+elif [ "$1" == "test" ];
+then
+  echo "Testing"
+  python3 -m unittest discover "$MUSE_HOME"/tests -p '*py'
 else
 	echo "Defaulting to develop"
 	start_jupyter &
