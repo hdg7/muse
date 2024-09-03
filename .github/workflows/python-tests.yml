@@ -25,5 +25,6 @@ jobs:
   - name: Run tests
     run: |
      echo $MUSE_HOME
-     echo $(pwd)
+     pwd
+     ls
      python -m unittest discover muse/tests -p '*py'
