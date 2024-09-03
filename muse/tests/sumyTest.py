@@ -25,7 +25,7 @@ class TestGensim(unittest.TestCase):
         nltk.download('punkt_tab')
         text = "This is a long text that needs to be summarized. It is very long and boring. I am trying to make it shorter. Maybe we can try to write something a little bit longer."
         sumy = Sumy(text)
-        smry = sumy.summarize()  
+        summary = sumy.summarize()  
         self.assertEqual(summary, "This is a long text that needs to be summarized.")
 
 
