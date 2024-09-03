@@ -15,7 +15,7 @@ except KeyError:
         home += "/muse"
 sys.path.append(home)
 
-# from muse.system.extractive.gensimMuse import Gensim
+from muse.system.extractive.gensimMuse import Gensim
 
 class TestGensim(unittest.TestCase):
 
