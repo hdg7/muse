@@ -12,7 +12,7 @@ try:
         home = os.environ["MUSE_HOME"]
 except KeyError:
         home = os.environ["HOME"]
-        home += "/muse/muse"
+        home += "/muse"
 sys.path.append(home)
 from muse.system.extractive.gensimMuse import Gensim
 
