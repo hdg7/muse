@@ -17,10 +17,10 @@ class Sumy:
         return summary
 
 # Example usage
-text = "This is a long text that needs to be summarized. It is very long and boring. I am trying to make it shorter."
-sumy = Sumy(text)
-summary = sumy.summarize()
-for sentence in summary:
-    print(sentence)
+# text = "This is a long text that needs to be summarized. It is very long and boring. I am trying to make it shorter."
+# sumy = Sumy(text)
+# summary = sumy.summarize()
+# for sentence in summary:
+#     print(sentence)
 
-print(summary)
+# print(summary)
