@@ -1,9 +1,10 @@
-#An example of an object using sumy to summarize text
+# An example of an object using sumy to summarize text
 # This is a simple example of how to use gensim to summarize text
 
 import nltk
 from gensim.summarization import summarize
 from gensim.summarization import keywords
+
 
 class Gensim:
     def __init__(self, text):
@@ -15,5 +16,3 @@ class Gensim:
 
     def get_keywords(self):
         return keywords(self.text)
-
-

@@ -1,10 +1,11 @@
-#An example of an object using sumy to summarize text
+# An example of an object using sumy to summarize text
 # This is a simple example of how to use sumy to summarize text
 
 import nltk
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lsa import LsaSummarizer
+
 
 class Sumy:
     def __init__(self, text):
@@ -15,6 +16,7 @@ class Sumy:
         summarizer = LsaSummarizer()
         summary = summarizer(parser.document, 3)
         return summary
+
 
 # Example usage
 text = "This is a long text that needs to be summarized. It is very long and boring. I am trying to make it shorter."

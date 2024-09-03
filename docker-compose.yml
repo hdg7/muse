@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  muse-jupyter:
+    build:
+      context: .
+      args:
+        USER_NAME: ${USER_NAME}  # Pass the username to the Dockerfile
+    ports:
+      - "8888:8888"  # Remap the port as needed, format is "host_port:container_port"
+    volumes:
+      - ./outputs:/home/${USER_NAME}/outputs  # Persist output files on the host machine
+      - ./plugins:/home/${USER_NAME}/.muse/plugins/  # Mount plugins directory from the host to the container
+    environment:
+      - MUSE_HOME=/home/${USER_NAME}/muse
+      - MUSE_OUTPUT=/home/${USER_NAME}/outputs
+      - MUSE_PLUGINS=/home/${USER_NAME}/.muse/plugins
+    container_name: muse-jupyter-container
+    command:
+      - "deploy"

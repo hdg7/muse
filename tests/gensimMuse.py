@@ -1,21 +1,17 @@
-#An example of an object using sumy to summarize text
+# An example of an object using sumy to summarize text
 # This is a simple example of how to use gensim to summarize text
 
-#From this python package we import the specific modules we need
+# From this python package we import the specific modules we need
 
 
 import unittest
-import sys
-import os
 
-try:
-        home = os.environ["MUSE_HOME"]
-except KeyError:
-        home = os.environ["HOME"]
-        home += "/muse"
-sys.path.append(home)
-print(home)
-from muse.system.extractive.gensimMuse import Gensim
+from utils import setup
+
+setup()
+
+from src.muse.system.extractive.gensimMuse import Gensim
+
 
 class TestGensim(unittest.TestCase):
 
@@ -31,5 +27,6 @@ class TestGensim(unittest.TestCase):
         keywords = gensim.get_keywords()
         self.assertEqual(keywords, "long text")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

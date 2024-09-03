@@ -3,3 +3,5 @@ sumy
 nltk
 jupyter
 scipy
+jupyter
+iplantuml

@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "MuSE"
+version = "0.0.1"
+authors = [
+    { name="Héctor Menéndez", email="hector.menendez@kcl.ac.uk" },
+    { name="Aidan Dakhama", email="aidan.dakhama@kcl.ac.uk" },
+]
+description = "MuSE: Multi-lingual Summarizer Evaluation Framework"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[project.urls]
+Homepage = "https://github.com/hdg7/muse"
+Issues = "https://github.com/hdg7/muse/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/muse"]
+
