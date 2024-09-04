@@ -6,13 +6,12 @@ from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lsa import LsaSummarizer
 
+from ..summarizer import Summarizer
 
-class Sumy:
-    def __init__(self, text):
-        self.text = text
 
-    def summarize(self):
-        parser = PlaintextParser.from_string(self.text, Tokenizer("english"))
+class Sumy(Summarizer):
+    def summarize(self) -> str:
+        parser = PlaintextParser.from_string(str(self.text), Tokenizer("english"))
         summarizer = LsaSummarizer()
         summary = summarizer(parser.document, 1)
         return summary

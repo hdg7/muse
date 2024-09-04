@@ -4,4 +4,3 @@ nltk
 jupyter
 scipy
 jupyter
-iplantuml

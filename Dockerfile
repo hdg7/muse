@@ -33,10 +33,6 @@ WORKDIR /home/$USER_NAME/muse
 RUN /home/$USER_NAME/install.bash
 WORKDIR /home/$USER_NAME
 
-
-# Install Jupyter Notebook UML extension
-RUN apt-get install -yq --fix-missing plantuml
-
 # Copy the init script
 ADD initScript.bash /home/$USER_NAME/initScript.bash
 RUN chmod 755 /home/$USER_NAME/initScript.bash

@@ -5,14 +5,13 @@ import nltk
 from gensim.summarization import summarize
 from gensim.summarization import keywords
 
+from ..summarizer import Summarizer
 
-class Gensim:
-    def __init__(self, text):
-        self.text = text
 
+class Gensim(Summarizer):
     def summarize(self):
-        summary = summarize(self.text)
+        summary = summarize(str(self.text))
         return summary
 
     def get_keywords(self):
-        return keywords(self.text)
+        return keywords(str(self.text))

@@ -41,6 +41,7 @@ elif [ "$1" == "test" ];
 then
   echo "Testing"
   python3 -m unittest discover "$MUSE_HOME"/tests -p '*py'
+  exit 0
 else
 	echo "Defaulting to develop"
 	start_jupyter &

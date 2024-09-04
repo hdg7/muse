@@ -2,7 +2,12 @@ import os
 import sys
 
 
-def setup():
+def setup() -> None:
+    """
+    This function is used to setup the path for the muse package, ensuring that the package can be imported
+
+    :return: None
+    """
     try:
         import muse
     except ImportError:
