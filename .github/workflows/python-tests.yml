@@ -30,4 +30,4 @@ jobs:
      echo $MUSE_HOME
      pwd
      ls
-     python -m unittest discover src/tests -p '*py'
+     python -m unittest discover tests -p '*py'
