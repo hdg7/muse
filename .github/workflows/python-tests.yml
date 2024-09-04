@@ -20,7 +20,7 @@ jobs:
   - name: Install dependencies
     run: |
       export MUSE_HOME=$GITHUB_WORKSPACE
-      ./install.sh
+      ./install.bash
       python -m pip install --upgrade pip
       python -m pip install -r requirements.txt
   - name: Run tests
