@@ -20,14 +20,10 @@ jobs:
     run: sudo apt-get update && sudo apt-get install -y python3-venv
   - name: Install dependencies
     run: |
-      export MUSE_HOME=$GITHUB_WORKSPACE
       python -m pip install --upgrade pip
       ./install.bash
       python -m pip install -r requirements.txt
   - name: Run tests
     run: |
      export MUSE_HOME=$GITHUB_WORKSPACE
-     echo $MUSE_HOME
-     pwd
-     ls
      python -m unittest discover tests -p '*py'
