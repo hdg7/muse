@@ -21,8 +21,10 @@ COPY ./ /home/$USER_NAME/muse
 RUN mkdir -p /home/$USER_NAME/.muse/plugins
 
 # Installing Ollama
-RUN curl -fsSL https://ollama.com/install.sh | sh
-RUN mkdir /root/models
+ADD https://ollama.com/install.sh /home/$USER_NAME/install.sh
+RUN chmod 755 /home/$USER_NAME/install.sh
+RUN /home/$USER_NAME/install.sh
+RUN rm /home/$USER_NAME/install.sh
 
 # Install MuSE
 COPY install.bash /home/$USER_NAME/install.bash

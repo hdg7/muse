@@ -19,6 +19,4 @@ rm -rf venv
 # install the package
 python3 -m pip install dist/*.whl --break-system-packages
 
-python3 -m pip install -r requirements.txt --break-system-packages
-
-
+python -m pip install -r requirements.txt

@@ -4,3 +4,4 @@ nltk
 jupyter
 scipy
 jupyter
+toml
