@@ -12,7 +12,7 @@ from utils import setup
 
 setup()
 
-from muse.system.extractive.sumyConnector import Sumy
+from muse.system.extractive.sumy_connector import Sumy
 
 
 class TestGensim(unittest.TestCase):

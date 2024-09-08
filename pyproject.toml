@@ -31,5 +31,12 @@ MuSE = "muse.muse:main"
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements.txt"]
 
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/.github",
+    "/docs",
+    "/tests",
+]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/muse"]
