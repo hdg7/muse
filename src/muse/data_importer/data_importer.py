@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Union
 
-from ..data_manager import MultiDocument, Document
 from ..data_fetcher.data_fetcher import RawData
+from ..data_manager import Document, MultiDocument
 
 
 class Importer(ABC):

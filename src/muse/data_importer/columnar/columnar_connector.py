@@ -1,8 +1,8 @@
 import pandas as pd
 
-from ..data_importer import Importer
+from ...data_manager import Conversation, Document, MultiDocument
 from ...utils import InvalidResourceError
-from ...data_manager import Document, MultiDocument, Conversation
+from ..data_importer import Importer
 
 
 class ColumnarConnector(Importer):

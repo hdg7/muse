@@ -4,6 +4,7 @@
 # From this python package we import the specific modules we need
 
 import nltk
+
 from muse.system.extractive.sumy_connector import Sumy
 
 
@@ -15,5 +16,7 @@ class TestSumy:
         sumy = Sumy(text)
         summary = sumy.summarize()
         print(summary[0])
-        assert str(summary[0]) == "Maybe we can try to write something a little bit longer."
-
+        assert (
+            str(summary[0])
+            == "Maybe we can try to write something a little bit longer."
+        )

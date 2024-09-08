@@ -35,7 +35,6 @@ dependencies = [
     "pytest",
     "black",
     "isort",
-    "flake8",
 ]
 
 [tool.hatch.envs.default.scripts]
@@ -44,8 +43,6 @@ format = [
     "black .",
     "isort ."
 ]
-docs = "sphinx-build -b html docs/ docs/_build/"
-lint = "flake8 ."
 
 [tool.black]
 line-length = 88

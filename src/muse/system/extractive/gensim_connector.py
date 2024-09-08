@@ -2,8 +2,7 @@
 # This is a simple example of how to use gensim to summarize text
 
 import nltk
-from gensim.summarization import summarize
-from gensim.summarization import keywords
+from gensim.summarization import keywords, summarize
 
 from ..summarizer import Summarizer
 

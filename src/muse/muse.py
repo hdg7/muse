@@ -17,8 +17,8 @@
 
 import argparse
 import sys
-from .__about__ import __version__
 
+from .__about__ import __version__
 
 # Potentially needed
 # from nltk import download

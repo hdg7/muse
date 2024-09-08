@@ -2,8 +2,8 @@
 # This is a simple example of how to use sumy to summarize text
 
 import nltk
-from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
+from sumy.parsers.plaintext import PlaintextParser
 from sumy.summarizers.lsa import LsaSummarizer
 
 from ..summarizer import Summarizer
