@@ -5,3 +5,5 @@ jupyter
 scipy
 jupyter
 toml
+rouge
+pandas

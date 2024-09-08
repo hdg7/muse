@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from typing import Union
 
-from ..datamanager import Document, MultiDocument
+from ..data_manager import Document, MultiDocument
 
 
 class Summarizer(ABC):
