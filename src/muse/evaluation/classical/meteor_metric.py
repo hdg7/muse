@@ -1,7 +1,5 @@
 # This object is used to calculate the meteor metric for the generated summaries
 from nltk.translate.meteor_score import meteor_score
-import os
-import sys
 
 
 class MeteorMetric:

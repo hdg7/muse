@@ -1,1 +1,1 @@
-from .resourceErrors import *
+from .resource_errors import *

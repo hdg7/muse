@@ -1,5 +1,7 @@
 class Document:
-    def __init__(self, text: str, summary: str | None = None, metadata: dict | None = None):
+    def __init__(
+        self, text: str, summary: str | None = None, metadata: dict | None = None
+    ):
         self.text = text
         self.summary = summary
         self.metadata = metadata

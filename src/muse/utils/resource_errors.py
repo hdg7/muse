@@ -22,4 +22,7 @@ class UnknownResourceError(Exception):
         self.resource = resource
 
     def __str__(self):
-        return "Unknown resource: %s\nNo connector found for this resource." % self.resource
+        return (
+            "Unknown resource: %s\nNo connector found for this resource."
+            % self.resource
+        )

@@ -1,3 +1,3 @@
-from .singledoc import Document
-from .multidoc import MultiDocument
+from .document import Document
+from .multi_document import MultiDocument
 from .conversation import Conversation

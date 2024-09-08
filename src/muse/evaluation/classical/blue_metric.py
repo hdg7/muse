@@ -1,7 +1,5 @@
 # This object is used to calculate the blue metric for the generated summaries
 from nltk.translate.bleu_score import corpus_bleu
-import os
-import sys
 
 
 class BleuMetric:

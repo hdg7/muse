@@ -1,7 +1,5 @@
 # This object is used to calculate the rouge metric for the generated summaries
 from rouge import Rouge
-import os
-import sys
 
 
 class RougeMetric:

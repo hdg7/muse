@@ -1,10 +1,11 @@
-from ..dataImporter import Importer
+from ..data_importer import Importer
 
 
 class FolderConnector(Importer):
     """
     Class for importing data from a folder.
     """
+
     def import_data(self, data, document_type):
         raise NotImplementedError
 

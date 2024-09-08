@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Union
 
 from ..data_manager import MultiDocument, Document
-from ..data_fetcher.dataFetcher import RawData
+from ..data_fetcher.data_fetcher import RawData
 
 
 class Importer(ABC):
@@ -14,8 +14,11 @@ class Importer(ABC):
                    appropriate object.
     - check_data_path: Check if the data path belongs to this connector.
     """
+
     @abstractmethod
-    def import_data(self, data: RawData, document_type: str) -> Union[Document, MultiDocument]:
+    def import_data(
+        self, data: RawData, document_type: str
+    ) -> Union[Document, MultiDocument]:
         """
         Import data from a given path by resolving the kind of data it is and returning the appropriate object.
 

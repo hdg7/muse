@@ -21,9 +21,9 @@ import toml
 
 
 def get_version():
-    with open('pyproject.toml', 'r') as f:
+    with open("pyproject.toml", "r") as f:
         pyproject_data = toml.load(f)
-    return pyproject_data['project']['version']
+    return pyproject_data["project"]["version"]
 
 
 # Potentially needed
