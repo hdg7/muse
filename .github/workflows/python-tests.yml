@@ -16,14 +16,13 @@ jobs:
     uses: actions/setup-python@v4
     with:
       python-version: '3.x'
-  - name: Install python3-venv
-    run: sudo apt-get update && sudo apt-get install -y python3-venv
-  - name: Install dependencies
+  - name: Install Hatch
+    uses: pypa/hatch@install
+  - name: Install MuSE
     run: |
       python -m pip install --upgrade pip
-      ./install.bash
-      python -m pip install -r requirements.txt
+      python -m hatch build -t wheel
+      python -m pip install dist/*.whl --break-system-packages
   - name: Run tests
     run: |
-     export MUSE_HOME=$GITHUB_WORKSPACE
-     python -m unittest discover tests -p '*py'
+      python -m hatch test
