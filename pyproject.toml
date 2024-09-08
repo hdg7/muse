@@ -4,7 +4,6 @@ build-backend = "hatchling.build"
 
 [project]
 name = "MuSE"
-version = "0.0.1"
 authors = [
     { name="Héctor Menéndez", email="hector.menendez@kcl.ac.uk" },
     { name="Aidan Dakhama", email="aidan.dakhama@kcl.ac.uk" },
@@ -19,7 +18,10 @@ classifiers = [
 ]
 license = "Apache-2.0"
 
-dynamic = ["dependencies"]
+dynamic = [
+    "dependencies",
+    "version"
+]
 
 [project.urls]
 Homepage = "https://github.com/hdg7/muse"
@@ -27,6 +29,36 @@ Issues = "https://github.com/hdg7/muse/issues"
 
 [project.scripts]
 MuSE = "muse.muse:main"
+
+[tool.hatch.envs.default]
+dependencies = [
+    "pytest",
+    "black",
+    "isort",
+    "flake8",
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest"
+format = [
+    "black .",
+    "isort ."
+]
+docs = "sphinx-build -b html docs/ docs/_build/"
+lint = "flake8 ."
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+addopts = "-ra -q"
+testpaths = ["tests"]
+
+[tool.hatch.version]
+path = "src/muse/__about__.py"
 
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements.txt"]

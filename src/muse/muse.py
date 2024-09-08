@@ -17,13 +17,7 @@
 
 import argparse
 import sys
-import toml
-
-
-def get_version():
-    with open("pyproject.toml", "r") as f:
-        pyproject_data = toml.load(f)
-    return pyproject_data["project"]["version"]
+from .__about__ import __version__
 
 
 # Potentially needed
@@ -98,7 +92,7 @@ def get_args():
 def main():
     args = get_args()
     if args.version:
-        print(f"MuSE version {get_version()}")
+        print(f"MuSE version {__version__}")
         sys.exit(0)
     if args.evType == "metrics":
         evaluate_metrics(args)

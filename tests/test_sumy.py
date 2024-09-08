@@ -3,19 +3,11 @@
 
 # From this python package we import the specific modules we need
 
-
-import unittest
 import nltk
-
-
-from utils import setup
-
-setup()
-
 from muse.system.extractive.sumy_connector import Sumy
 
 
-class TestGensim(unittest.TestCase):
+class TestSumy:
     def test_summarize(self):
         nltk.download("punkt")
         nltk.download("punkt_tab")
@@ -23,10 +15,5 @@ class TestGensim(unittest.TestCase):
         sumy = Sumy(text)
         summary = sumy.summarize()
         print(summary[0])
-        self.assertEqual(
-            str(summary[0]), "Maybe we can try to write something a little bit longer."
-        )
+        assert str(summary[0]) == "Maybe we can try to write something a little bit longer."
 
-
-if __name__ == "__main__":
-    unittest.main()

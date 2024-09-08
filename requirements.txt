@@ -3,7 +3,5 @@ sumy
 nltk
 jupyter
 scipy
-jupyter
-toml
 rouge
 pandas
