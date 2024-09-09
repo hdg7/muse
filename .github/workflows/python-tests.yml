@@ -21,7 +21,7 @@ jobs:
   - name: Install MuSE
     run: |
       python3 -m pip install --upgrade pip
-      python3 -m hatch build -t wheel
+      hatch build -t wheel
       python3 -m pip install dist/*.whl --break-system-packages
   - name: Run tests
     run: |
