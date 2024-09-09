@@ -5,9 +5,18 @@ ARG USER_NAME
 
 # Install the necessary packages
 RUN apt-get -y update
-RUN apt-get install -yq --fix-missing build-essential emacs-nox vim-tiny git inkscape jed libsm6 libxext-dev \
-    libxrender1 lmodern netcat-openbsd python3-dev tzdata unzip nano emacs ca-certificates wget gcc-12 \
-    gcc-12-plugin-dev curl screen  nginx clang llvm lld gdb python3 python3-pip
+RUN apt-get install -yq --fix-missing  \
+    build-essential  \
+    emacs-nox  \
+    vim  \
+    git \
+    screen \
+    ca-certificates  \
+    wget \
+    curl  \
+    screen \
+    python3 \
+    python3-pip
 
 # Create a non-root user
 RUN useradd -ms /bin/bash $USER_NAME
@@ -17,7 +26,7 @@ USER root
 # Set up user folders
 WORKDIR /home/$USER_NAME
 RUN mkdir /home/$USER_NAME/outputs
-COPY ./ /home/$USER_NAME/muse
+RUN mkdir /home/$USER_NAME/muse
 RUN mkdir -p /home/$USER_NAME/.muse/plugins
 
 # Installing Ollama
@@ -27,12 +36,15 @@ RUN /home/$USER_NAME/install.sh
 RUN rm /home/$USER_NAME/install.sh
 
 # Install MuSE
-COPY install.bash /home/$USER_NAME/install.bash
-COPY requirements.txt /home/$USER_NAME/requirements.txt
-RUN apt-get install -yq --fix-missing python3-venv
-RUN chmod 755 /home/$USER_NAME/install.bash
+ENV PIPX_HOME=/opt/pipx
+ENV PIPX_BIN_DIR=/usr/local/bin
+RUN apt-get install -y pipx
+RUN pipx install hatch
+COPY ./ /home/$USER_NAME/muse
 WORKDIR /home/$USER_NAME/muse
-RUN /home/$USER_NAME/install.bash
+RUN hatch build -t wheel
+RUN python3 -m pip install /home/$USER_NAME/muse/dist/*.whl --break-system-packages
+RUN rm -rf /home/$USER_NAME/muse/dist
 WORKDIR /home/$USER_NAME
 
 # Copy the init script
@@ -43,10 +55,6 @@ RUN chmod 755 /home/$USER_NAME/initScript.bash
 COPY docs /home/$USER_NAME/docs
 WORKDIR /home/$USER_NAME
 RUN chown -R user:user *
-
-# Clean up the image
-RUN rm /home/$USER_NAME/requirements.txt
-RUN rm /home/$USER_NAME/install.bash
 
 # Expose the port and set the environment variables
 EXPOSE 8888

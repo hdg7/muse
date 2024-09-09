@@ -35,14 +35,14 @@ class ColumnarConnector(Importer):
         if document_type not in ["document", "multi-document", "conversation"]:
             raise ValueError("Invalid document type")
 
-        if data.metadata["file_type"] == "csv":
+        if data["metadata"]["resource_type"] == "csv":
             return ColumnarConnector._import_csv(data, document_type)
 
-        if data.metadata["file_type"] == "parquet":
+        if data["metadata"]["resource_type"] == "parquet":
             return ColumnarConnector._import_parquet(data, document_type)
 
     def check_data(self, data, document_type):
-        if data.metadata["file_type"] not in ["csv", "parquet"]:
+        if data["metadata"]["resource_type"] not in ["csv", "parquet"]:
             self._invalid_reason = "File type is not csv or parquet"
             return False
 

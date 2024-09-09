@@ -28,7 +28,7 @@ Homepage = "https://github.com/hdg7/muse"
 Issues = "https://github.com/hdg7/muse/issues"
 
 [project.scripts]
-MuSE = "muse.muse:main"
+MuSE = "muse.__main__:main"
 
 [tool.hatch.envs.default]
 dependencies = [

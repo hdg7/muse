@@ -14,10 +14,13 @@ class FileConnector(DataFetcher):
             raise ResourceNotFoundError(data_path)
 
         with open(data_path, "r") as file:
-            return RawData(
-                file.read(),
-                metadata={"path": data_path, "file_type": data_path.rsplit(".", 1)[1]},
-            )
+            return {
+                "data": file.read(),
+                "metadata": {
+                    "resource_name": data_path,
+                    "resource_type": data_path.rsplit(".", 1)[1]
+                },
+            }
 
     def check_data_path(self, data_path: str) -> bool:
         return os.path.isfile(data_path)

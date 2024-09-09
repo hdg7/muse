@@ -1,13 +1,23 @@
 #!/bin/bash
 
+LOG_FILE="/var/log/muse.log"
+
 function start_jupyter {
   jupyter notebook --allow-root --no-browser --port 8888 --ip=0.0.0.0
 }
 
 function start_ollama {
-  OLLAMA_MODELS=${HOME}/models ollama serve &
-  sleep 5
+  echo "Starting Ollama, any logs will be written to ${LOG_FILE}"
+  OLLAMA_MODELS=${HOME}/models ollama serve > ${LOG_FILE} 2>&1 &
+  while true; do
+    if curl -s http://localhost:11434 > /dev/null; then
+      break
+    fi
+    sleep 5
+  done
 }
+
+cd "${MUSE_HOME}" || exit 1
 
 start_ollama
 
@@ -40,7 +50,12 @@ then
 elif [ "$1" == "test" ];
 then
   echo "Testing"
-  python3 -m unittest discover "$MUSE_HOME"/tests -p '*py'
+  hatch run test
+  if [ $? -ne 0 ]; then
+    echo "Tests failed"
+    exit 1
+  fi
+  echo "Tests passed"
   exit 0
 else
 	echo "Defaulting to develop"

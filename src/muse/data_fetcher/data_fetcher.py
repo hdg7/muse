@@ -1,20 +1,21 @@
 from abc import ABC, abstractmethod
+from typing import TypedDict
 
 
-class RawData:
+class ResourceMetadata(TypedDict):
     """
-    Class for raw data.
+    Type definition for resource metadata.
     """
+    resource_name: str
+    resource_type: str
 
-    def __init__(self, data: str, metadata: dict | None = None):
-        """
-        Initialize the raw data.
 
-        :param data: Raw data.
-        :param metadata: Metadata of the raw data.
-        """
-        self.data = data
-        self.metadata = metadata
+class RawData(TypedDict):
+    """
+    Type definition for raw data.
+    """
+    data: str
+    metadata: ResourceMetadata
 
 
 class DataFetcher(ABC):
