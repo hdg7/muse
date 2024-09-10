@@ -1,5 +1,13 @@
+import os
+import sys
 
-
+try:
+    home = os.environ['MUSE_HOME']
+except KeyError:
+    home = os.path.join(os.path.expanduser('~'), 'muse')
+    
+sys.path.append(home)
+    
 from muse import Muse
 
 # Create a new Muse object
