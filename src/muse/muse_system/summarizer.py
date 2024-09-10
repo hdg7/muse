@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Union
 
-from ..data_manager import Document, MultiDocument
+#from ..data_manager import Document, MultiDocument
 
 
 class Summarizer(ABC):
@@ -9,7 +9,7 @@ class Summarizer(ABC):
     Abstract class for summarization algorithms
     """
 
-    def __init__(self, text: Union[Document, MultiDocument]):
+    def __init__(self):#, text: Union[Document, MultiDocument]):
         """
         Constructor for the Summarizer class
         :param text: The text to be summarized

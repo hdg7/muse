@@ -18,7 +18,7 @@ muse = Muse()
 muse.dataManager("single","./exampleFolder", "en")
 
 #Set the specific type of model or system for the summarization
-muse.system(["gensim","sumy"])
+muse.system(["sumy"])
 
 #Set the specific type of evaluation metrics
 muse.evSummary(["rouge","bleu"])

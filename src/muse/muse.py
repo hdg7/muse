@@ -1,5 +1,7 @@
-import data_manager
-import system
+import data_manager.document
+import muse_system.extractive.sumy_connector
+import evaluation.classical.rouge_metric
+import muse_system
 import evaluation
 
 class Muse:
@@ -14,9 +16,9 @@ class Muse:
 #        elif(datatype == "multi"):
 
     def system(self,systemList):
-        if("gensim" in systemList):            
-            self.gensim = system.extractive.gensim_connector.Gensim()
-            systems.append(self.gensim)
+        if("sumy" in systemList):            
+            self.sumy = muse_system.extractive.sumy_connector.Sumy()
+            systems.append(self.sumy)
         pass
 
     def evSummary(self,evMetricsList):
