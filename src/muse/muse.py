@@ -1,28 +1,43 @@
-"""
-MuSE is an evaluation system for summarization engines.
+import data_manager
+import system
+import evaluation
 
-The license for this software is Apache 2.0. Please see the LICENSE file for more information.
-"""
 from argparse import Namespace
 from enum import Enum
 from typing import TypedDict, cast
 
-# Potentially needed
-# from nltk import download
 
-# download('punkt')
-# download('averaged_perceptron_tagger')
-# download('maxent_ne_chunker')
-# download('words')
-# download('stopwords')
-# download('wordnet')
-# download('maxent_ne_chunker')
-# download('words')
-# download('stopwords')
-# download('wordnet')
-# download('maxent_ne_chunker')
+__all__ = ["System", "DataType", "EvaluationType", "Options", "Muse"]
 
-__all__ = ["System", "DataType", "EvaluationType", "Options", "main"]
+
+class Muse:
+    def __init__(self):
+        systems = []
+        evMetrics = []
+        
+
+    def dataManager(self,datatype,dataPath,dataLanguage):
+        if(datatype == "single"):
+            self.dataManager = data_manager.document.Document(dataPath,dataLanguage)
+
+    def system(self,systemList):
+        if("gensim" in systemList):            
+            self.gensim = system.extractive.gensim_connector.Gensim()
+            systems.append(self.gensim)
+        pass
+
+    def evSummary(self,evMetricsList):
+        if("rouge" in evMetricsList):
+            self.rouge = evaluation.classical.rouge_metric.Rouge()
+            evMetrics.append(self.rouge)
+        pass
+
+    def run(self):
+        for metric in evMetrics:
+            for system in systems:
+                print(metric.evaluate(system.run(self.dataManager.data, self.dataManager.reference)))
+
+        pass
 
 
 class System(Enum):

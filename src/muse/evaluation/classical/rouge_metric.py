@@ -1,4 +1,4 @@
-# This object is used to calculate the rouge metric for the generated summaries
+OB# This object is used to calculate the rouge metric for the generated summaries
 from rouge import Rouge
 
 
@@ -7,6 +7,6 @@ class RougeMetric:
         self.args = args
         self.rouge = Rouge()
 
-    def evaluate(self):
+    def evaluate(orignal, generated):
         self.rouge_score = self.rouge.get_scores(self.args.data, self.args.system)
         return self.rouge_score
