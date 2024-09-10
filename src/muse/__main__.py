@@ -2,7 +2,7 @@ import sys
 from argparse import ArgumentParser, Namespace
 
 from .__about__ import __version__
-from .muse import main as entry_point
+from .muse import main as entry_point, System, DataType, EvaluationType
 
 
 def validate_arguments(args: Namespace) -> Namespace:
@@ -27,12 +27,14 @@ def parse_arguments() -> Namespace:
     required = parser.add_argument_group("required arguments")
     required.add_argument(
         "-s", "--system",
+        action="append",
+        choices=[item.value for item in System],
         help="The summarization system to evaluate",
         required=True
     )
     required.add_argument(
         "-t", "--type",
-        choices=["single-document", "multi-document", "conversation"],
+        choices=[item.value for item in DataType],
         help="The type of the summarization system",
         required=True,
     )
@@ -43,7 +45,8 @@ def parse_arguments() -> Namespace:
     )
     required.add_argument(
         "-e", "--evType",
-        choices=["metrics", "reference", "llm"],
+        action="append",
+        choices=[item.value for item in EvaluationType],
         help="The type of evaluation to perform",
         required=True,
     )
@@ -52,11 +55,8 @@ def parse_arguments() -> Namespace:
 
     optional.add_argument(
         "-m", "--metrics",
+        action="append",
         help="The metrics to use for evaluation"
-    )
-    optional.add_argument(
-        "-c", "--config",
-        help="The configuration file to use for evaluation"
     )
     optional.add_argument(
         "-l", "--language",
@@ -64,12 +64,16 @@ def parse_arguments() -> Namespace:
     )
     optional.add_argument(
         "--llm",
-        help="language model to use for evaluation"
+        help="Large language model to use for evaluation"
     )
     optional.add_argument(
         "-o", "--output",
         help="The output file to write the results to",
         default="MuSE_results.csv"
+    )
+    optional.add_argument(
+        "-c", "--config",
+        help="The configuration file to use for evaluation"
     )
 
     run_config = parser.add_argument_group("run configuration")
