@@ -1,7 +1,7 @@
 import data_manager.document
-import muse_system.extractive.sumy_connector
+import system.extractive.sumy_connector
 import evaluation.classical.rouge_metric
-import muse_system
+import system
 import evaluation
 
 from argparse import Namespace
@@ -14,32 +14,33 @@ __all__ = ["System", "DataType", "EvaluationType", "Options", "Muse"]
 
 class Muse:
     def __init__(self):
-        systems = []
-        evMetrics = []
+        self.systems = []
+        self.evMetrics = []
         
 
     def dataManager(self,datatype,dataPath,dataLanguage):
         if(datatype == "single"):
-            self.dataManager = data_manager.document.Document(dataPath,dataLanguage)
-
+            #the datapath is a folder with a  two files, one with the text and the other with the reference
+            text = open(dataPath+"/text.txt", "r")
+            reference = open(dataPath+"/reference.txt", "r")
+            self.dataManager = data_manager.document.Document(text.read(),reference.read())
     def system(self,systemList):
         if("sumy" in systemList):            
-            self.sumy = muse_system.extractive.sumy_connector.Sumy()
-            systems.append(self.sumy)
+            self.sumy = system.extractive.sumy_connector.Sumy(self.dataManager.text)
+            self.systems.append(self.sumy)
         pass
 
     def evSummary(self,evMetricsList):
         if("rouge" in evMetricsList):
-            self.rouge = evaluation.classical.rouge_metric.Rouge()
-            evMetrics.append(self.rouge)
+            self.rouge = evaluation.classical.rouge_metric.RougeMetric()
+            self.evMetrics.append(self.rouge)
         pass
 
     def run(self):
-        for metric in evMetrics:
-            for system in systems:
-                print(metric.evaluate(system.run(self.dataManager.data, self.dataManager.reference)))
+        for metric in self.evMetrics:
+            for model in self.systems:
+                print(metric.evaluate(model.summarize(), self.dataManager.summary))
 
-        pass
 
 
 class System(Enum):

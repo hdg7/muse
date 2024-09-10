@@ -24,5 +24,4 @@ muse.system(["sumy"])
 muse.evSummary(["rouge","bleu"])
 
 #Run it
-muse.run()
-    
+muse.run()    

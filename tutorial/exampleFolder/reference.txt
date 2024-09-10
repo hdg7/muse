@@ -1,0 +1,1 @@
+Debian is a stable, versatile, and community-driven Linux distribution. It is known for its commitment to free and open-source software, reliability, and wide range of software packages. Debian has played a significant role in shaping the Linux ecosystem and is a popular choice for both personal and professional use.
