@@ -8,7 +8,7 @@ except KeyError:
 
 sys.path.append(home)
 
-from muse import Muse
+from muse.muse import Muse
 
 # Create a new Muse object
 
