@@ -5,7 +5,7 @@
 
 import nltk
 
-from muse.system.extractive.sumy_connector import Sumy
+from muse.system import Sumy
 
 
 class TestSumy:

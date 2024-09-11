@@ -6,7 +6,7 @@ from muse.data_manager.document.document import Document
 from muse.evaluation.classical.rouge_metric import RougeMetric
 from muse.system.extractive.sumy_connector import Sumy
 
-__all__ = ["System", "DataType", "EvaluationType", "Options", "Muse"]
+# __all__ = ["System", "DataType", "EvaluationType", "Options", "Muse"]
 
 
 class Muse:

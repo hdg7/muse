@@ -1,0 +1,1 @@
+from muse.data_manager.multi_document.multi_document import MultiDocument
