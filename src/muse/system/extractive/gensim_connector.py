@@ -4,7 +4,7 @@
 import nltk
 from gensim.summarization import keywords, summarize
 
-from ..summarizer import Summarizer
+from muse.system.summarizer import Summarizer
 
 
 class Gensim(Summarizer):

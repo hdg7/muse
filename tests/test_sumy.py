@@ -15,8 +15,7 @@ class TestSumy:
         text = "This is a long text that needs to be summarized. It is very long and boring. I am trying to make it shorter. Maybe we can try to write something a little bit longer."
         sumy = Sumy(text)
         summary = sumy.summarize()
-        print(summary[0])
+        print(summary)
         assert (
-            str(summary[0])
-            == "Maybe we can try to write something a little bit longer."
+            str(summary) == "Maybe we can try to write something a little bit longer."
         )

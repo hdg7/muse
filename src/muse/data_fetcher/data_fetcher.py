@@ -6,6 +6,7 @@ class ResourceMetadata(TypedDict):
     """
     Type definition for resource metadata.
     """
+
     resource_name: str
     resource_type: str
 
@@ -14,6 +15,7 @@ class RawData(TypedDict):
     """
     Type definition for raw data.
     """
+
     data: str
     metadata: ResourceMetadata
 

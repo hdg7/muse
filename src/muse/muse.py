@@ -1,13 +1,12 @@
-import data_manager.document
-import system.extractive.sumy_connector
-import evaluation.classical.rouge_metric
-import system
-import evaluation
-
 from argparse import Namespace
 from enum import Enum
 from typing import TypedDict, cast
 
+import data_manager.document
+import evaluation
+import evaluation.classical.rouge_metric
+import system
+import system.extractive.sumy_connector
 
 __all__ = ["System", "DataType", "EvaluationType", "Options", "Muse"]
 
@@ -16,22 +15,24 @@ class Muse:
     def __init__(self):
         self.systems = []
         self.evMetrics = []
-        
 
-    def dataManager(self,datatype,dataPath,dataLanguage):
-        if(datatype == "single"):
-            #the datapath is a folder with a  two files, one with the text and the other with the reference
-            text = open(dataPath+"/text.txt", "r")
-            reference = open(dataPath+"/reference.txt", "r")
-            self.dataManager = data_manager.document.Document(text.read(),reference.read())
-    def system(self,systemList):
-        if("sumy" in systemList):            
+    def dataManager(self, datatype, dataPath, dataLanguage):
+        if datatype == "single":
+            # the datapath is a folder with a  two files, one with the text and the other with the reference
+            text = open(dataPath + "/text.txt", "r")
+            reference = open(dataPath + "/reference.txt", "r")
+            self.dataManager = data_manager.document.Document(
+                text.read(), reference.read()
+            )
+
+    def system(self, systemList):
+        if "sumy" in systemList:
             self.sumy = system.extractive.sumy_connector.Sumy(self.dataManager.text)
             self.systems.append(self.sumy)
         pass
 
-    def evSummary(self,evMetricsList):
-        if("rouge" in evMetricsList):
+    def evSummary(self, evMetricsList):
+        if "rouge" in evMetricsList:
             self.rouge = evaluation.classical.rouge_metric.RougeMetric()
             self.evMetrics.append(self.rouge)
         pass
@@ -40,7 +41,6 @@ class Muse:
         for metric in self.evMetrics:
             for model in self.systems:
                 print(metric.evaluate(model.summarize(), self.dataManager.summary))
-
 
 
 class System(Enum):

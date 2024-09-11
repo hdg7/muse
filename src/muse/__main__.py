@@ -2,7 +2,8 @@ import sys
 from argparse import ArgumentParser, Namespace
 
 from .__about__ import __version__
-from .muse import main as entry_point, System, DataType, EvaluationType
+from .muse import DataType, EvaluationType, System
+from .muse import main as entry_point
 
 
 def validate_arguments(args: Namespace) -> Namespace:
@@ -18,33 +19,38 @@ def parse_arguments() -> Namespace:
         description="MuSE is a evaluation system for summarization engines."
     )
     parser.add_argument(
-        "-V", "--version",
+        "-V",
+        "--version",
         action="version",
         version=f"MuSE version {__version__}",
-        help="Show the version number and exit"
+        help="Show the version number and exit",
     )
 
     required = parser.add_argument_group("required arguments")
     required.add_argument(
-        "-s", "--system",
+        "-s",
+        "--system",
         action="append",
         choices=[item.value for item in System],
         help="The summarization system to evaluate",
-        required=True
+        required=True,
     )
     required.add_argument(
-        "-t", "--type",
+        "-t",
+        "--type",
         choices=[item.value for item in DataType],
         help="The type of the summarization system",
         required=True,
     )
     required.add_argument(
-        "-d", "--data",
+        "-d",
+        "--data",
         help="The data to evaluate the summarization system on",
         required=True,
     )
     required.add_argument(
-        "-e", "--evType",
+        "-e",
+        "--evType",
         action="append",
         choices=[item.value for item in EvaluationType],
         help="The type of evaluation to perform",
@@ -54,35 +60,24 @@ def parse_arguments() -> Namespace:
     optional = parser.add_argument_group("optional arguments")
 
     optional.add_argument(
-        "-m", "--metrics",
-        action="append",
-        help="The metrics to use for evaluation"
+        "-m", "--metrics", action="append", help="The metrics to use for evaluation"
     )
+    optional.add_argument("-l", "--language", help="The language of the data")
+    optional.add_argument("--llm", help="Large language model to use for evaluation")
     optional.add_argument(
-        "-l", "--language",
-        help="The language of the data"
-    )
-    optional.add_argument(
-        "--llm",
-        help="Large language model to use for evaluation"
-    )
-    optional.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         help="The output file to write the results to",
-        default="MuSE_results.csv"
+        default="MuSE_results.csv",
     )
     optional.add_argument(
-        "-c", "--config",
-        help="The configuration file to use for evaluation"
+        "-c", "--config", help="The configuration file to use for evaluation"
     )
 
     run_config = parser.add_argument_group("run configuration")
 
     run_config.add_argument(
-        "-v", "--verbose",
-        action="count",
-        default=0,
-        help="Increase output verbosity"
+        "-v", "--verbose", action="count", default=0, help="Increase output verbosity"
     )
 
     return validate_arguments(parser.parse_args())

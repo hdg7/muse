@@ -6,7 +6,7 @@ from sumy.nlp.tokenizers import Tokenizer
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.summarizers.lsa import LsaSummarizer
 
-from ..summarizer import Summarizer
+from muse.system.summarizer import Summarizer
 
 
 class Sumy(Summarizer):

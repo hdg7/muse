@@ -1,4 +1,4 @@
-from ..data_importer import Importer
+from muse.data_importer.data_importer import Importer
 
 
 class FolderConnector(Importer):

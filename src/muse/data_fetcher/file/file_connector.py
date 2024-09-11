@@ -1,7 +1,7 @@
 import os
 
-from ...utils import ResourceNotFoundError
-from ..data_fetcher import DataFetcher, RawData
+from muse.data_fetcher.data_fetcher import DataFetcher, RawData
+from muse.utils.resource_errors import ResourceNotFoundError
 
 
 class FileConnector(DataFetcher):
@@ -18,7 +18,7 @@ class FileConnector(DataFetcher):
                 "data": file.read(),
                 "metadata": {
                     "resource_name": data_path,
-                    "resource_type": data_path.rsplit(".", 1)[1]
+                    "resource_type": data_path.rsplit(".", 1)[1],
                 },
             }
 

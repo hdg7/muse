@@ -1,8 +1,10 @@
 import pandas as pd
 
-from ...data_manager import Conversation, Document, MultiDocument
-from ...utils import InvalidResourceError
-from ..data_importer import Importer
+from muse.data_importer.data_importer import Importer
+from muse.data_manager.conversation.conversations import Conversation
+from muse.data_manager.document.document import Document
+from muse.data_manager.multi_document.multi_document import MultiDocument
+from muse.utils.resource_errors import InvalidResourceError
 
 
 class ColumnarConnector(Importer):

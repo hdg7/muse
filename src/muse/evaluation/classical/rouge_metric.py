@@ -3,11 +3,11 @@ from rouge import Rouge
 
 
 class RougeMetric:
-    def __init__(self, args = None):
-        if(args is not None):
+    def __init__(self, args=None):
+        if args is not None:
             self.args = args
         self.rouge = Rouge()
 
-    def evaluate(self,original, generated):
+    def evaluate(self, original, generated):
         self.rouge_score = self.rouge.get_scores(original, generated)
         return self.rouge_score

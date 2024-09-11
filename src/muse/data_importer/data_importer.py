@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Union
 
-from ..data_fetcher.data_fetcher import RawData
-from ..data_manager import Document, MultiDocument
+from muse.data_fetcher.data_fetcher import RawData
+from muse.data_manager.document.document import Document
+from muse.data_manager.multi_document.multi_document import MultiDocument
 
 
 class Importer(ABC):
