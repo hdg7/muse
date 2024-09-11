@@ -1,1 +1,5 @@
-from muse.utils.resource_errors import InvalidResourceError, UnknownResourceError, ResourceNotFoundError
+from muse.utils.resource_errors import (
+    InvalidResourceError,
+    ResourceNotFoundError,
+    UnknownResourceError,
+)

@@ -1,8 +1,8 @@
 # An example of an object using sumy to summarize text
 # This is a simple example of how to use gensim to summarize text
 
-#import nltk
-#from gensim.summarization import keywords, summarize
+# import nltk
+# from gensim.summarization import keywords, summarize
 
 from muse.system.summarizer import Summarizer
 

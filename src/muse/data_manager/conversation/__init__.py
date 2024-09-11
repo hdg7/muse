@@ -1,1 +1,1 @@
-from muse.data_manager.conversation.conversation import TextUnit, Conversation
+from muse.data_manager.conversation.conversation import Conversation, TextUnit
