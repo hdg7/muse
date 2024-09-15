@@ -17,16 +17,17 @@ class FolderConnector(DataFetcher):
         data = []
         files = os.listdir(data_path)
         for identifier in [
-            f for f in files if "summary" not in f and os.path.isfile(f)
+            f for f in files if "summary" not in f and os.path.isfile(os.path.join(data_path, f))
         ]:
             identifier_no_extension = identifier.rsplit(".", 1)[0]
             summary = rf"{re.escape(identifier_no_extension)}_summary.*"
             if any([re.match(summary, f) for f in files]):
-                summary = os.path.join(data_path, f"{identifier}_summary")
+                summary = [f for f in files if re.match(summary, f)][0]
+                summary = os.path.join(data_path, f"{summary}")
                 with open(summary, "r") as file:
                     summary_data = file.read()
 
-            with open(identifier, "r") as file:
+            with open(os.path.join(data_path, identifier), "r") as file:
                 text_data = file.read()
 
             if "summary_data" in locals():
@@ -36,18 +37,18 @@ class FolderConnector(DataFetcher):
             else:
                 data.append(self._create_data(None, None, identifier, text_data))
 
-        for identifier in [f for f in files if os.path.isdir(f)]:
-            summary = os.path.join(identifier, "summary")
+        for identifier in [f for f in files if os.path.isdir(os.path.join(data_path, f))]:
+            summary = os.path.join(data_path, identifier, "summary")
             summary = rf"{re.escape(summary)}.*"
             files_in_identifier = os.listdir(identifier)
             if any([re.match(summary, f) for f in files_in_identifier]):
-                summary = os.path.join(identifier, "summary")
+                summary = os.path.join(data_path, identifier, "summary")
                 with open(summary, "r") as file:
                     summary_data = file.read()
 
             text_data = []
             for file in [f for f in files_in_identifier if "summary" not in f]:
-                with open(os.path.join(identifier, file), "r") as f:
+                with open(os.path.join(data_path, identifier, file), "r") as f:
                     text_data.append(f.read())
 
             if "summary_data" in locals():

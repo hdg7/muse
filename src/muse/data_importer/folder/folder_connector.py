@@ -76,4 +76,4 @@ class FolderConnector(Importer):
             if item["metadata"]["data_kind"] == "summary":
                 summary = item["data"]
 
-        return Document(text, summary)
+        return Document(text, summary, data["metadata"])

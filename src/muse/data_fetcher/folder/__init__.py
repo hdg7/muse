@@ -1,1 +1,1 @@
-from muse.data_fetcher.file.file_connector import FileConnector
+from muse.data_fetcher.folder.folder_connector import FolderConnector
