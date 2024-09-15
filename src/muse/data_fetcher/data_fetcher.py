@@ -17,7 +17,7 @@ class RawData(TypedDict):
     Type definition for raw data.
     """
 
-    data: str | bytes | list['RawData']
+    data: str | bytes | list["RawData"]
     metadata: ResourceMetadata
 
 

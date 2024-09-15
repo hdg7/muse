@@ -41,7 +41,9 @@ class FolderConnector(Importer):
 
         return True
 
-    def _import_folder(self, data, document_type) -> Union[list[Document], list[MultiDocument]]:
+    def _import_folder(
+        self, data, document_type
+    ) -> Union[list[Document], list[MultiDocument]]:
         match document_type:
             case "document":
                 return self._create_documents(data)

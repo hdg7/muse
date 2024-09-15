@@ -1,4 +1,5 @@
 import os.path
+
 from pytest import fixture
 
 from muse.data_fetcher import fetch_data

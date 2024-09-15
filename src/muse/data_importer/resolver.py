@@ -1,7 +1,7 @@
 from typing import Union
 
-from muse.data_importer.data_importer import Importer
 from muse.data_fetcher.data_fetcher import RawData
+from muse.data_importer.data_importer import Importer
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.utils.resource_errors import UnknownResourceError

@@ -1,4 +1,5 @@
 import os.path
+
 from pytest import fixture
 
 from muse.data_fetcher import fetch_data
@@ -22,5 +23,9 @@ def test_import_data_csv(parquet_path):
     documents = import_data(data, "document")
     assert isinstance(documents, list)
     assert len(documents) == 10
-    assert documents[0].text.startswith("the interest in anchoring phenomena and phenomena in confined nematic liquid crystals has largely been driven by their potential use in liquid crystal display devices")
-    assert documents[0].summary.startswith("we study the phase behavior of a nematic liquid crystal confined between a flat substrate with strong anchoring and a patterned substrate whose structure and local anchoring strength we vary .")
+    assert documents[0].text.startswith(
+        "the interest in anchoring phenomena and phenomena in confined nematic liquid crystals has largely been driven by their potential use in liquid crystal display devices"
+    )
+    assert documents[0].summary.startswith(
+        "we study the phase behavior of a nematic liquid crystal confined between a flat substrate with strong anchoring and a patterned substrate whose structure and local anchoring strength we vary ."
+    )

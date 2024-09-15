@@ -1,5 +1,6 @@
+from io import BytesIO, StringIO
+
 import pandas as pd
-from io import StringIO, BytesIO
 
 from muse.data_importer.data_importer import Importer
 from muse.data_manager.conversation.conversation import Conversation
@@ -55,18 +56,24 @@ class ColumnarConnector(Importer):
     @staticmethod
     def _import_csv(data, document_type):
         if document_type == "document":
-            return ColumnarConnector._create_documents(pd.read_csv(StringIO(data["data"])))
+            return ColumnarConnector._create_documents(
+                pd.read_csv(StringIO(data["data"]))
+            )
         if document_type == "multi-document":
             return ColumnarConnector._create_multi_document_csv(
                 pd.read_csv(StringIO(data["data"]))
             )
         if document_type == "conversation":
-            return ColumnarConnector._create_conversation_csv(pd.read_csv(StringIO(data["data"])))
+            return ColumnarConnector._create_conversation_csv(
+                pd.read_csv(StringIO(data["data"]))
+            )
 
     @staticmethod
     def _import_parquet(data, document_type):
         if document_type == "document":
-            return ColumnarConnector._create_documents(pd.read_parquet(BytesIO(data["data"])))
+            return ColumnarConnector._create_documents(
+                pd.read_parquet(BytesIO(data["data"]))
+            )
         if document_type == "multi-document":
             return ColumnarConnector._create_multi_document_csv(
                 pd.read_parquet(BytesIO(data["data"]))
@@ -79,7 +86,9 @@ class ColumnarConnector(Importer):
     @staticmethod
     def _create_documents(df: pd.DataFrame):
         if "text" not in df.columns:
-            raise InvalidResourceError("No 'text' column found, please rename the text column to 'text', and if you have a summary, rename that to 'summary'")
+            raise InvalidResourceError(
+                "No 'text' column found, please rename the text column to 'text', and if you have a summary, rename that to 'summary'"
+            )
         documents = []
         for i, row in df.iterrows():
             text = row["text"]

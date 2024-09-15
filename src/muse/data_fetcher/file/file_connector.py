@@ -13,7 +13,7 @@ class FileConnector(DataFetcher):
         if not self.check_data_path(data_path):
             raise ResourceNotFoundError(data_path)
 
-        text_extensions = ['txt', 'json', 'csv', 'html', 'xml', 'md', 'log']
+        text_extensions = ["txt", "json", "csv", "html", "xml", "md", "log"]
 
         file_extension = data_path.rsplit(".", 1)[-1].lower()
 

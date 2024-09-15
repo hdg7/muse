@@ -1,15 +1,15 @@
 from argparse import Namespace
 from enum import Enum
-from typing import TypedDict, cast, Union
+from typing import TypedDict, Union, cast
 
+from muse.data_fetcher.resolver import fetch_data
+from muse.data_importer.resolver import import_data
+from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
-from muse.data_manager.conversation.conversation import Conversation
 from muse.evaluation.classical.rouge_metric import RougeMetric
 from muse.summarizer.extractive.sumy_connector import Sumy
 from muse.summarizer.summarizer import Summarizer
-from muse.data_fetcher.resolver import fetch_data
-from muse.data_importer.resolver import import_data
 
 __all__ = ["SummarizerSystem", "DataType", "EvaluationType", "Options", "Muse"]
 
@@ -63,7 +63,9 @@ class Muse:
             case DataType.Conversation:
                 raise NotImplementedError("Conversation not yet implemented")
 
-    def add_summarizer(self, *summarizers: SummarizerSystem | tuple[SummarizerSystem, dict[str, any]]):
+    def add_summarizer(
+        self, *summarizers: SummarizerSystem | tuple[SummarizerSystem, dict[str, any]]
+    ):
         for summarizer in summarizers:
             if isinstance(summarizer, tuple):
                 summarizer, params = summarizer
@@ -103,7 +105,9 @@ class Muse:
             return item
         if item in [type(x).__name__ for x in self.evaluations]:
             return item
-        raise AttributeError(f"{self.__class__.__name__} object has no attribute {item}")
+        raise AttributeError(
+            f"{self.__class__.__name__} object has no attribute {item}"
+        )
 
 
 def main(options: Options | Namespace) -> int:
