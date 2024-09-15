@@ -9,6 +9,7 @@ class ResourceMetadata(TypedDict):
 
     resource_name: str
     resource_type: str
+    data_kind: str | None
 
 
 class RawData(TypedDict):
@@ -16,7 +17,7 @@ class RawData(TypedDict):
     Type definition for raw data.
     """
 
-    data: str
+    data: str | bytes | list['RawData']
     metadata: ResourceMetadata
 
 

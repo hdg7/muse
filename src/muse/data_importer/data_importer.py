@@ -19,7 +19,7 @@ class Importer(ABC):
     @abstractmethod
     def import_data(
         self, data: RawData, document_type: str
-    ) -> Union[Document, MultiDocument]:
+    ) -> Union[list[Document], list[MultiDocument]]:
         """
         Import data from a given path by resolving the kind of data it is and returning the appropriate object.
 
