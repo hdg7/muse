@@ -1,45 +1,20 @@
 from argparse import Namespace
 from enum import Enum
-from typing import TypedDict, cast
+from typing import TypedDict, cast, Union
 
 from muse.data_manager.document.document import Document
+from muse.data_manager.multi_document.multi_document import MultiDocument
+from muse.data_manager.conversation.conversation import Conversation
 from muse.evaluation.classical.rouge_metric import RougeMetric
-from muse.system.extractive.sumy_connector import Sumy
+from muse.summarizer.extractive.sumy_connector import Sumy
+from muse.summarizer.summarizer import Summarizer
+from muse.data_fetcher.resolver import fetch_data
+from muse.data_importer.resolver import import_data
 
-# __all__ = ["System", "DataType", "EvaluationType", "Options", "Muse"]
-
-
-class Muse:
-    def __init__(self):
-        self.systems = []
-        self.evMetrics = []
-
-    def dataManager(self, datatype, dataPath, dataLanguage):
-        if datatype == "single":
-            # the datapath is a folder with a  two files, one with the text and the other with the reference
-            text = open(dataPath + "/text.txt", "r")
-            reference = open(dataPath + "/reference.txt", "r")
-            self.dataManager = Document(text.read(), reference.read())
-
-    def system(self, systemList):
-        if "sumy" in systemList:
-            self.sumy = Sumy(self.dataManager.text)
-            self.systems.append(self.sumy)
-        pass
-
-    def evSummary(self, evMetricsList):
-        if "rouge" in evMetricsList:
-            self.rouge = RougeMetric()
-            self.evMetrics.append(self.rouge)
-        pass
-
-    def run(self):
-        for metric in self.evMetrics:
-            for model in self.systems:
-                print(metric.evaluate(model.summarize(), self.dataManager.summary))
+__all__ = ["SummarizerSystem", "DataType", "EvaluationType", "Options", "Muse"]
 
 
-class System(Enum):
+class SummarizerSystem(Enum):
     GenSim = "gensim"
     Sumy = "sumy"
 
@@ -57,7 +32,7 @@ class EvaluationType(Enum):
 
 
 class Options(TypedDict):
-    system: list[System]
+    system: list[SummarizerSystem]
     data_type: DataType
     data: str
     evaluation_type: list[EvaluationType]
@@ -70,6 +45,65 @@ class Options(TypedDict):
 def evaluate_metric(options: Options) -> None:
     # This should be moved somewhere universal, so it can be reused in the library
     raise NotImplementedError("Evaluation of metrics not yet implemented")
+
+
+class Muse:
+    def __init__(self):
+        self.summarizers: list[Summarizer] = []
+        self.evaluations: list[object]
+        self.data: Union[Document, MultiDocument, Conversation] | None = None
+
+    def set_data(self, datatype: DataType, data_path: str, data_language: str):
+        match datatype:
+            case DataType.SingleDocument:
+                raw_data = fetch_data(data_path)
+                self.data = import_data(raw_data, "document")
+            case DataType.MultiDocument:
+                raise NotImplementedError("MultiDocument not yet implemented")
+            case DataType.Conversation:
+                raise NotImplementedError("Conversation not yet implemented")
+
+    def add_summarizer(self, *summarizers: SummarizerSystem | tuple[SummarizerSystem, dict[str, any]]):
+        for summarizer in summarizers:
+            if isinstance(summarizer, tuple):
+                summarizer, params = summarizer
+            else:
+                params = {}
+            match summarizer:
+                case SummarizerSystem.GenSim:
+                    raise NotImplementedError("GenSim not yet implemented")
+                case SummarizerSystem.Sumy:
+                    self.summarizers.append(Sumy(params))
+
+    def add_evaluation(self, *evaluations: str | tuple[str, dict[str, any]]):
+        for evaluation in evaluations:
+            if isinstance(evaluation, tuple):
+                evaluation, params = evaluation
+            else:
+                params = {}
+            match evaluation:
+                case "rouge":
+                    self.evaluations.append(RougeMetric(params))
+                case "bleu":
+                    raise NotImplementedError("BLEU not yet implemented")
+                case "meteor":
+                    raise NotImplementedError("METEOR not yet implemented")
+
+    def run(self):
+        for summarizer in self.summarizers:
+            self._evaluate_summarizer(summarizer)
+
+    def _evaluate_summarizer(self, summarizer: Summarizer) -> None:
+        summary = summarizer.summarize(self.data)
+        for evaluation in self.evaluations:
+            print(evaluation.evaluate(self.data, summary))
+
+    def __getattr__(self, item):
+        if item in [type(x).__name__ for x in self.summarizers]:
+            return item
+        if item in [type(x).__name__ for x in self.evaluations]:
+            return item
+        raise AttributeError(f"{self.__class__.__name__} object has no attribute {item}")
 
 
 def main(options: Options | Namespace) -> int:

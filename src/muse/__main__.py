@@ -2,7 +2,7 @@ import sys
 from argparse import ArgumentParser, Namespace
 
 from .__about__ import __version__
-from .muse import DataType, EvaluationType, System
+from .muse import DataType, EvaluationType, SummarizerSystem
 from .muse import main as entry_point
 
 
@@ -31,7 +31,7 @@ def parse_arguments() -> Namespace:
         "-s",
         "--system",
         action="append",
-        choices=[item.value for item in System],
+        choices=[item.value for item in SummarizerSystem],
         help="The summarization system to evaluate",
         required=True,
     )

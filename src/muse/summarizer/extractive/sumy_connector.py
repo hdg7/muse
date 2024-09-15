@@ -6,12 +6,12 @@ from sumy.nlp.tokenizers import Tokenizer
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.summarizers.lsa import LsaSummarizer
 
-from muse.system.summarizer import Summarizer
+from muse.summarizer.summarizer import Summarizer
 
 
 class Sumy(Summarizer):
-    def summarize(self) -> str:
-        parser = PlaintextParser.from_string(str(self.text), Tokenizer("english"))
+    def summarize(self, text) -> str:
+        parser = PlaintextParser.from_string(str(text), Tokenizer("english"))
         summarizer = LsaSummarizer()
         summary = summarizer(parser.document, 1)
         return str(summary[0])

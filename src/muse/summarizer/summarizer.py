@@ -10,17 +10,18 @@ class Summarizer(ABC):
     Abstract class for summarization algorithms
     """
 
-    def __init__(self, text: Union[Document, MultiDocument]):
+    def __init__(self, params: dict[str, any]):
         """
         Constructor for the Summarizer class
-        :param text: The text to be summarized
         """
-        self.text = text
+        pass
 
     @abstractmethod
-    def summarize(self) -> str:
+    def summarize(self, text: Union[Document, MultiDocument]) -> str:
         """
         Abstract method to summarize the text
+
+        :param text: The text to be summarized
         :return: The summarized text
         """
         pass

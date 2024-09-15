@@ -4,11 +4,11 @@
 # import nltk
 # from gensim.summarization import keywords, summarize
 
-from muse.system.summarizer import Summarizer
+from muse.summarizer.summarizer import Summarizer
 
 
 class Gensim(Summarizer):
-    def summarize(self):
+    def summarize(self, text):
         pass
         # summary = summarize(str(self.text))
         # return summary
