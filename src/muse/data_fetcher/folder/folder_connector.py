@@ -17,7 +17,9 @@ class FolderConnector(DataFetcher):
         data = []
         files = os.listdir(data_path)
         for identifier in [
-            f for f in files if "summary" not in f and os.path.isfile(os.path.join(data_path, f))
+            f
+            for f in files
+            if "summary" not in f and os.path.isfile(os.path.join(data_path, f))
         ]:
             identifier_no_extension = identifier.rsplit(".", 1)[0]
             summary = rf"{re.escape(identifier_no_extension)}_summary.*"
@@ -37,7 +39,9 @@ class FolderConnector(DataFetcher):
             else:
                 data.append(self._create_data(None, None, identifier, text_data))
 
-        for identifier in [f for f in files if os.path.isdir(os.path.join(data_path, f))]:
+        for identifier in [
+            f for f in files if os.path.isdir(os.path.join(data_path, f))
+        ]:
             summary = os.path.join(data_path, identifier, "summary")
             summary = rf"{re.escape(summary)}.*"
             files_in_identifier = os.listdir(identifier)

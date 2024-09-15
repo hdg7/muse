@@ -9,5 +9,5 @@ class RougeMetric:
         self.rouge = Rouge()
 
     def evaluate(self, original, generated):
-        self.rouge_score = self.rouge.get_scores(original, generated)
+        self.rouge_score = self.rouge.get_scores(str(original), str(generated))
         return self.rouge_score

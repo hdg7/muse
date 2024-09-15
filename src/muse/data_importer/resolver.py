@@ -7,7 +7,9 @@ from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.utils.resource_errors import UnknownResourceError
 
 
-def import_data(data: RawData, document_type: str) -> Union[list[Document], list[MultiDocument]]:
+def import_data(
+    data: RawData, document_type: str
+) -> Union[list[Document], list[MultiDocument]]:
     """
     Import raw data from a given path.
 

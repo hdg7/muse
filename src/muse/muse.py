@@ -50,10 +50,16 @@ def evaluate_metric(options: Options) -> None:
 class Muse:
     def __init__(self):
         self.summarizers: list[Summarizer] = []
-        self.evaluations: list[object]
-        self.data: Union[Document, MultiDocument, Conversation] | None = None
+        self.evaluations: list[object] = []
+        self.data: (
+            Union[list[Document], list[MultiDocument], list[Conversation]] | None
+        ) = None
+
+        self.results: dict[str, dict[str, any]] = {}
 
     def set_data(self, datatype: DataType, data_path: str, data_language: str):
+        if not isinstance(datatype, DataType):
+            datatype = DataType(datatype)
         match datatype:
             case DataType.SingleDocument:
                 raw_data = fetch_data(data_path)
@@ -71,6 +77,8 @@ class Muse:
                 summarizer, params = summarizer
             else:
                 params = {}
+            if not isinstance(summarizer, SummarizerSystem):
+                summarizer = SummarizerSystem(summarizer)
             match summarizer:
                 case SummarizerSystem.GenSim:
                     raise NotImplementedError("GenSim not yet implemented")
@@ -87,7 +95,8 @@ class Muse:
                 case "rouge":
                     self.evaluations.append(RougeMetric(params))
                 case "bleu":
-                    raise NotImplementedError("BLEU not yet implemented")
+                    pass
+                    # raise NotImplementedError("BLEU not yet implemented")
                 case "meteor":
                     raise NotImplementedError("METEOR not yet implemented")
 
@@ -95,19 +104,20 @@ class Muse:
         for summarizer in self.summarizers:
             self._evaluate_summarizer(summarizer)
 
-    def _evaluate_summarizer(self, summarizer: Summarizer) -> None:
-        summary = summarizer.summarize(self.data)
-        for evaluation in self.evaluations:
-            print(evaluation.evaluate(self.data, summary))
+        return self.get_results()
 
-    def __getattr__(self, item):
-        if item in [type(x).__name__ for x in self.summarizers]:
-            return item
-        if item in [type(x).__name__ for x in self.evaluations]:
-            return item
-        raise AttributeError(
-            f"{self.__class__.__name__} object has no attribute {item}"
-        )
+    def _evaluate_summarizer(self, summarizer: Summarizer) -> None:
+        # TODO: We only can summarize one document at a time, we need to handle more.
+        #       Similarly, we also need to adapt the evaluation metrics for this.
+        summary = summarizer.summarize(self.data[0])
+        results = {}
+        for evaluation in self.evaluations:
+            result = evaluation.evaluate(self.data, summary)
+            results[evaluation.__class__.__name__] = result
+        self.results[summarizer.__class__.__name__] = results
+
+    def get_results(self) -> dict[str, dict[str, any]]:
+        return self.results
 
 
 def main(options: Options | Namespace) -> int:
