@@ -5,7 +5,7 @@
 
 import nltk
 
-from muse.system import Sumy
+from muse.summarizer import Sumy
 
 
 class TestSumy:
@@ -13,8 +13,8 @@ class TestSumy:
         nltk.download("punkt")
         nltk.download("punkt_tab")
         text = "This is a long text that needs to be summarized. It is very long and boring. I am trying to make it shorter. Maybe we can try to write something a little bit longer."
-        sumy = Sumy(text)
-        summary = sumy.summarize()
+        sumy = Sumy({})
+        summary = sumy.summarize(text)
         print(summary)
         assert (
             str(summary) == "Maybe we can try to write something a little bit longer."
