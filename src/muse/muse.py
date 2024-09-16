@@ -8,6 +8,9 @@ from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.evaluation.classical.rouge_metric import RougeMetric
+from muse.evaluation.classical.bleu_metric import BleuMetric
+from muse.evaluation.classical.meteor_metric import MeteorMetric
+from muse.evaluation.evaluation import Evaluation
 from muse.summarizer.extractive.sumy_connector import Sumy
 from muse.summarizer.summarizer import Summarizer
 
@@ -50,7 +53,7 @@ def evaluate_metric(options: Options) -> None:
 class Muse:
     def __init__(self):
         self.summarizers: list[Summarizer] = []
-        self.evaluations: list[object] = []
+        self.evaluations: list[Evaluation] = []
         self.data: (
             Union[list[Document], list[MultiDocument], list[Conversation]] | None
         ) = None
@@ -95,10 +98,9 @@ class Muse:
                 case "rouge":
                     self.evaluations.append(RougeMetric(params))
                 case "bleu":
-                    pass
-                    # raise NotImplementedError("BLEU not yet implemented")
+                    self.evaluations.append(BleuMetric(params))
                 case "meteor":
-                    raise NotImplementedError("METEOR not yet implemented")
+                    self.evaluations.append(MeteorMetric(params))
 
     def run(self):
         for summarizer in self.summarizers:
@@ -112,7 +114,10 @@ class Muse:
         summary = summarizer.summarize(self.data[0])
         results = {}
         for evaluation in self.evaluations:
-            result = evaluation.evaluate(self.data, summary)
+            result = evaluation.evaluate([summary],
+                                         reference_summary=[self.data[0].summary],
+                                         reference_text=[str(self.data[0])]
+                                         )
             results[evaluation.__class__.__name__] = result
         self.results[summarizer.__class__.__name__] = results
 
