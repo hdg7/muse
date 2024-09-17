@@ -13,9 +13,13 @@ class BleuMetric(Evaluation):
     def __init__(self, args):
         self.args = args
 
-    def evaluate(self, summary, reference_text=None, reference_summary=None) -> dict[str, any]:
+    def evaluate(
+        self, summary, reference_text=None, reference_summary=None
+    ) -> dict[str, any]:
         if len(summary) != len(reference_summary):
-            raise ValueError("The number of summaries and reference summaries should be the same")
+            raise ValueError(
+                "The number of summaries and reference summaries should be the same"
+            )
 
         if len(summary) == 1:
             return self._evaluate_single(summary[0], reference_summary[0])

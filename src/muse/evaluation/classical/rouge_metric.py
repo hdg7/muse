@@ -9,11 +9,14 @@ class RougeMetric(Evaluation):
 
     ROUGE only applies to comparing summaries and reference summaries
     """
+
     def __init__(self, params):
         self.rouge = Rouge()
         self.avg = params.get("avg", False)
 
-    def evaluate(self, summary, reference_text=None, reference_summary=None) -> dict[str, any]:
+    def evaluate(
+        self, summary, reference_text=None, reference_summary=None
+    ) -> dict[str, any]:
         """
         Method to evaluate the summary
 
@@ -23,7 +26,9 @@ class RougeMetric(Evaluation):
         :return: The evaluation results
         """
         if len(summary) != len(reference_summary):
-            raise ValueError("The number of summaries and reference summaries should be the same")
+            raise ValueError(
+                "The number of summaries and reference summaries should be the same"
+            )
 
         if len(summary) == 1:
             return self._evaluate_single(summary[0], reference_summary[0])

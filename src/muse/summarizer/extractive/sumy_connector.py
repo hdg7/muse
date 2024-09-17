@@ -20,4 +20,3 @@ class Sumy(Summarizer):
 
     def _summary_multi(self, texts):
         return [self._summarize_single(text) for text in texts]
-

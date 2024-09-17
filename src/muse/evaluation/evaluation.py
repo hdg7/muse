@@ -14,7 +14,12 @@ class Evaluation(ABC):
         pass
 
     @abstractmethod
-    def evaluate(self, summary: list[str], reference_text: list[str] | None, reference_summary: list[str] | None = None) -> dict[str, any]:
+    def evaluate(
+        self,
+        summary: list[str],
+        reference_text: list[str] | None,
+        reference_summary: list[str] | None = None,
+    ) -> dict[str, any]:
         """
         Abstract method to evaluate the summary
 

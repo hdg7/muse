@@ -7,9 +7,9 @@ from muse.data_importer.resolver import import_data
 from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
-from muse.evaluation.classical.rouge_metric import RougeMetric
 from muse.evaluation.classical.bleu_metric import BleuMetric
 from muse.evaluation.classical.meteor_metric import MeteorMetric
+from muse.evaluation.classical.rouge_metric import RougeMetric
 from muse.evaluation.evaluation import Evaluation
 from muse.summarizer.extractive.sumy_connector import Sumy
 from muse.summarizer.summarizer import Summarizer
@@ -112,10 +112,11 @@ class Muse:
         summary = summarizer.summarize(self.data)
         results = {}
         for evaluation in self.evaluations:
-            result = evaluation.evaluate(summary,
-                                         reference_summary=[s.summary for s in self.data],
-                                         reference_text=[str(s) for s in self.data]
-                                         )
+            result = evaluation.evaluate(
+                summary,
+                reference_summary=[s.summary for s in self.data],
+                reference_text=[str(s) for s in self.data],
+            )
             results[evaluation.__class__.__name__] = result
         self.results[summarizer.__class__.__name__] = results
 
