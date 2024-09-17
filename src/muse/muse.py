@@ -109,14 +109,12 @@ class Muse:
         return self.get_results()
 
     def _evaluate_summarizer(self, summarizer: Summarizer) -> None:
-        # TODO: We only can summarize one document at a time, we need to handle more.
-        #       Similarly, we also need to adapt the evaluation metrics for this.
-        summary = summarizer.summarize(self.data[0])
+        summary = summarizer.summarize(self.data)
         results = {}
         for evaluation in self.evaluations:
-            result = evaluation.evaluate([summary],
-                                         reference_summary=[self.data[0].summary],
-                                         reference_text=[str(self.data[0])]
+            result = evaluation.evaluate(summary,
+                                         reference_summary=[s.summary for s in self.data],
+                                         reference_text=[str(s) for s in self.data]
                                          )
             results[evaluation.__class__.__name__] = result
         self.results[summarizer.__class__.__name__] = results

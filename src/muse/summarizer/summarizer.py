@@ -17,11 +17,11 @@ class Summarizer(ABC):
         pass
 
     @abstractmethod
-    def summarize(self, text: Union[Document, MultiDocument]) -> str:
+    def summarize(self, texts: Union[list[Document], list[MultiDocument]]) -> list[str]:
         """
         Abstract method to summarize the text
 
-        :param text: The text to be summarized
+        :param texts: The text to be summarized
         :return: The summarized text
         """
         pass
