@@ -6,3 +6,4 @@ scipy
 rouge
 pandas
 pyarrow
+ollama

@@ -29,6 +29,14 @@ class DataFetcher(ABC):
     - fetch_data: Fetch raw data from a given path.
     - check_data_path: Check if the data path belongs to this connector.
     """
+    @abstractmethod
+    def __init__(self, options: dict[str, any]):
+        """
+        Initialize the data fetcher.
+
+        :param options: Options to initialize the data fetcher.
+        """
+        pass
 
     @abstractmethod
     def fetch_data(self, data_path: str) -> RawData:

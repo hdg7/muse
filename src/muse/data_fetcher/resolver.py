@@ -2,7 +2,7 @@ from muse.data_fetcher.data_fetcher import DataFetcher, RawData, ResourceMetadat
 from muse.utils.resource_errors import UnknownResourceError
 
 
-def fetch_data(data_path: str) -> RawData:
+def fetch_data(data_path: str, options: dict[str, any] = None) -> RawData:
     """
     Fetch raw data from a given path.
 
@@ -12,7 +12,8 @@ def fetch_data(data_path: str) -> RawData:
     :raises ResourceNotFoundError: If the resource is not found.
     """
     for fetcher in DataFetcher.__subclasses__():
-        if fetcher().check_data_path(data_path):
-            return fetcher().fetch_data(data_path)
+        fetcher = fetcher(options)
+        if fetcher.check_data_path(data_path):
+            return fetcher.fetch_data(data_path)
 
     raise UnknownResourceError(data_path)

@@ -29,8 +29,15 @@ class ColumnarConnector(Importer):
             #PERSON2# I'm good, how are you?
     """
 
-    def __init__(self):
+    def __init__(self, options: dict[str, any] = None):
         self._invalid_reason = None
+
+        self.text_column = options.get("text_column", "text")
+        self.summary_column = options.get("summary_column", "summary")
+
+        self.metadata_columns = options.get("metadata_columns", [])
+
+        self.csv_separator = options.get("csv_separator", ",")
 
     def import_data(self, data, document_type):
         if not self.check_data(data, document_type):
@@ -40,67 +47,65 @@ class ColumnarConnector(Importer):
             raise ValueError("Invalid document type")
 
         if data["metadata"]["resource_type"] == "csv":
-            return ColumnarConnector._import_csv(data, document_type)
+            return self._import_csv(data, document_type)
 
         if data["metadata"]["resource_type"] == "parquet":
-            return ColumnarConnector._import_parquet(data, document_type)
+            return self._import_parquet(data, document_type)
 
     def check_data(self, data, document_type):
         if data["metadata"]["resource_type"] not in ["csv", "parquet"]:
             self._invalid_reason = "File type is not csv or parquet"
             return False
 
-        # TODO: Check more things about the data
         return True
 
-    @staticmethod
-    def _import_csv(data, document_type):
+    def _import_csv(self, data, document_type):
         if document_type == "document":
-            return ColumnarConnector._create_documents(
-                pd.read_csv(StringIO(data["data"]))
+            return self._create_documents(
+                pd.read_csv(StringIO(data["data"]), sep=self.csv_separator)
             )
         if document_type == "multi-document":
-            return ColumnarConnector._create_multi_document_csv(
-                pd.read_csv(StringIO(data["data"]))
+            return self._create_multi_document_csv(
+                pd.read_csv(StringIO(data["data"]), sep=self.csv_separator)
             )
         if document_type == "conversation":
-            return ColumnarConnector._create_conversation_csv(
-                pd.read_csv(StringIO(data["data"]))
+            return self._create_conversation_csv(
+                pd.read_csv(StringIO(data["data"]), sep=self.csv_separator)
             )
 
-    @staticmethod
-    def _import_parquet(data, document_type):
+    def _import_parquet(self, data, document_type):
         if document_type == "document":
-            return ColumnarConnector._create_documents(
+            return self._create_documents(
                 pd.read_parquet(BytesIO(data["data"]))
             )
         if document_type == "multi-document":
-            return ColumnarConnector._create_multi_document_csv(
+            return self._create_multi_document_csv(
                 pd.read_parquet(BytesIO(data["data"]))
             )
         if document_type == "conversation":
-            return ColumnarConnector._create_conversation_csv(
+            return self._create_conversation_csv(
                 pd.read_parquet(BytesIO(data["data"]))
             )
 
-    @staticmethod
-    def _create_documents(df: pd.DataFrame):
-        if "text" not in df.columns:
+    def _create_documents(self, df: pd.DataFrame):
+        if self.text_column not in df.columns:
             raise InvalidResourceError(
-                "No 'text' column found, please rename the text column to 'text', and if you have a summary, rename that to 'summary'"
+                f"No '{self.text_column}' column found, please rename the text column to '{self.text_column}', and if "
+                f"you have a summary, rename that to '{self.summary_column}', or set the text_column and summary_column"
             )
         documents = []
         for i, row in df.iterrows():
-            text = row["text"]
-            summary = row.get("summary", None)
-            metadata = {k: v for k, v in row.items() if k not in ["text", "summary"]}
+            text = row[self.text_column]
+            summary = row.get(self.summary_column, None)
+            if self.metadata_columns:
+                metadata = {col: row[col] for col in self.metadata_columns}
+            else:
+                metadata = {k: v for k, v in row.items() if k not in ["text", "summary"]}
             documents.append(Document(text, summary, metadata))
         return documents
 
-    @staticmethod
-    def _create_multi_document_csv(df: pd.DataFrame):
+    def _create_multi_document_csv(self, df: pd.DataFrame):
         raise NotImplementedError
 
-    @staticmethod
-    def _create_conversation_csv(df: pd.DataFrame):
+    def _create_conversation_csv(self, df: pd.DataFrame):
         raise NotImplementedError

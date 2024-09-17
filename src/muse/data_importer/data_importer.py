@@ -17,6 +17,15 @@ class Importer(ABC):
     """
 
     @abstractmethod
+    def __init__(self, options: dict[str, any]):
+        """
+        Initialize the data importer.
+
+        :param args: Arguments to initialize the data importer.
+        """
+        pass
+
+    @abstractmethod
     def import_data(
         self, data: RawData, document_type: str
     ) -> Union[list[Document], list[MultiDocument]]:

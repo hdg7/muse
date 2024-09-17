@@ -9,6 +9,14 @@ class FileConnector(DataFetcher):
     Class for fetching data from files.
     """
 
+    def __init__(self, options: dict[str, any] = None):
+        """
+        Initialize the file connector.
+
+        :param options: Options to initialize the file connector.
+        """
+        pass
+
     def fetch_data(self, data_path: str) -> RawData:
         if not self.check_data_path(data_path):
             raise ResourceNotFoundError(data_path)

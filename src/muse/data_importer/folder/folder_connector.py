@@ -22,7 +22,7 @@ class FolderConnector(Importer):
         encoded within the resource_name, along with any other relevant information, such as the speaker.
     """
 
-    def __init__(self):
+    def __init__(self, options: dict[str, any] = None):
         self._invalid_reason = None
 
     def import_data(self, data, document_type):
