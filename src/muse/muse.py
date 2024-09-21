@@ -2,7 +2,6 @@ from argparse import Namespace
 from enum import Enum
 from typing import TypedDict, Union, cast
 
-from muse.data_fetcher.resolver import fetch_data
 from muse.data_importer.resolver import import_data
 from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
@@ -65,8 +64,7 @@ class Muse:
             datatype = DataType(datatype)
         match datatype:
             case DataType.SingleDocument:
-                raw_data = fetch_data(data_path)
-                self.data = import_data(raw_data, "document")
+                self.data = import_data(data_path, "document")
             case DataType.MultiDocument:
                 raise NotImplementedError("MultiDocument not yet implemented")
             case DataType.Conversation:

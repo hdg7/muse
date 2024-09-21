@@ -13,4 +13,4 @@ class MultiDocument:
         self.metadata = metadata
 
     def __str__(self):
-        return str(self.documents)
+        return "\n".join([str(document) for document in self.documents])

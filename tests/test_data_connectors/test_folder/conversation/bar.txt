@@ -1,0 +1,5 @@
+#Person1# What are your plans for this weekend?
+#Person2# I'm thinking of going hiking in the mountains. How about you?
+#Person1# I'm planning to relax at home and catch up on some reading. Do you have any book recommendations?
+#Person2# I just finished reading a great mystery novel. I can lend it to you if you're interested.
+#Person1# That would be fantastic! I'll bring it back to you next week. Thanks!

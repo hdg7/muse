@@ -1,14 +1,14 @@
 import os
-import tempfile
 import shutil
-from datetime import datetime, timedelta
-import requests
-import zipfile
 import tarfile
-import git
+import tempfile
+import zipfile
+from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import urlparse
 
+import git
+import requests
 
 TMP_DIR = Path(tempfile.gettempdir())
 ONE_DAY_AGO = datetime.now() - timedelta(days=1)
@@ -66,7 +66,9 @@ def clone(uri: str) -> str:
     if repo_dir.exists():
         repo_age = datetime.fromtimestamp(repo_dir.stat().st_mtime)
         if repo_age < ONE_DAY_AGO:
-            print(f"Repository is older than 1 day. Removing {repo_dir} and re-cloning.")
+            print(
+                f"Repository is older than 1 day. Removing {repo_dir} and re-cloning."
+            )
             shutil.rmtree(repo_dir)  # Remove the old repository
         else:
             print(f"Repository is up to date. No need to clone.")

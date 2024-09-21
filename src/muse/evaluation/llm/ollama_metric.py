@@ -49,7 +49,10 @@ class OllamaMetric(Evaluation):
         if not summary:
             raise ValueError("The summary should not be empty")
 
-        if summary and (len(summary) != len(reference_summary) or len(summary) != len(reference_text)):
+        if summary and (
+            len(summary) != len(reference_summary)
+            or len(summary) != len(reference_text)
+        ):
             raise ValueError(
                 "The number of summaries and reference summaries should be the same"
             )

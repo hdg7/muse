@@ -1,10 +1,11 @@
 class TextUnit:
-    def __init__(self, text: str, metadata: dict | None = None):
+    def __init__(self, text: str, speaker: str, metadata: dict | None = None):
         self.text = text
+        self.speaker = speaker
         self.metadata = metadata
 
     def __str__(self):
-        return str(self.text)
+        return f"{str(self.speaker)}: {str(self.text)}"
 
 
 class Conversation:
@@ -19,4 +20,4 @@ class Conversation:
         self.metadata = metadata
 
     def __str__(self):
-        return str(self.text_units)
+        return "\n".join([str(text_unit) for text_unit in self.text_units])

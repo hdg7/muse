@@ -1,7 +1,8 @@
+import re
 from abc import ABC, abstractmethod
 from typing import Union
 
-from muse.data_fetcher.data_fetcher import RawData
+from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
 
@@ -28,7 +29,7 @@ class Importer(ABC):
     @abstractmethod
     def import_data(
         self, data_path: str, document_type: str
-    ) -> Union[list[Document], list[MultiDocument]]:
+    ) -> Union[list[Document], list[MultiDocument], list[Conversation]]:
         """
         Import data from a given path by resolving the kind of data it is and returning the appropriate object.
 
@@ -53,3 +54,25 @@ class Importer(ABC):
         :raises NotImplementedError: If the method is not implemented in the subclass.
         """
         pass
+
+
+def split_text_by_regex(text, regex):
+    """
+    Split text by a regex, matching the content between the regex with the text after the match.
+
+    :param text:
+    :param regex:
+    :return: A list of tuples, where the first element is the text matched by the regex, and the second element is the text after the match.
+    """
+    result = []
+    matches = list(re.finditer(regex, text))
+
+    for i, match in enumerate(matches):
+        match_text = match.group(0)[1:-1]
+        if i + 1 < len(matches):
+            text_after_match = text[match.end() : matches[i + 1].start()]
+        else:
+            text_after_match = text[match.end() :]
+        result.append((match_text, text_after_match))
+
+    return result

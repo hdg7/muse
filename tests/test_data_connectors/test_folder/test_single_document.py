@@ -2,25 +2,16 @@ import os.path
 
 from pytest import fixture
 
-from muse.data_fetcher import fetch_data
 from muse.data_importer import import_data
 
 
 @fixture
 def folder_path():
-    return os.path.join(os.path.dirname(__file__), "test")
-
-
-def test_fetch_data_folder(folder_path):
-    data = fetch_data(folder_path)
-    assert data["metadata"]["resource_name"] == folder_path
-    assert data["metadata"]["resource_type"] == "directory"
-    assert data["metadata"]["data_kind"] is None
+    return os.path.join(os.path.dirname(__file__), "doc")
 
 
 def test_import_data_csv(folder_path):
-    data = fetch_data(folder_path)
-    documents = import_data(data, "document")
+    documents = import_data(folder_path, "document")
     assert isinstance(documents, list)
     assert len(documents) == 2
     for document in documents:

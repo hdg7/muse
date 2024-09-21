@@ -1,13 +1,13 @@
-from io import BytesIO, StringIO
+from io import BytesIO
 
 import pandas as pd
 
-from muse.data_importer.data_importer import Importer
-from muse.data_manager.conversation.conversation import Conversation
+from muse.data_importer.data_importer import Importer, split_text_by_regex
+from muse.data_importer.fetcher import get_resource_type, handle_uri
+from muse.data_manager.conversation.conversation import Conversation, TextUnit
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.utils.resource_errors import InvalidResourceError
-from muse.data_importer.fetcher import handle_uri, get_resource_type
 
 
 class ColumnarConnector(Importer):
@@ -20,7 +20,7 @@ class ColumnarConnector(Importer):
         - all other columns are assumed to be metadata.
 
     For MultiDocument:
-        - Each row is assumed to be a separate document, with an id column named 'id', used to group documents together.
+        - Each row is assumed to be a separate document, with an id column named 'multi_doc_id', used to group documents together.
         - All else is the same as for Document.
 
     For conversation (not yet implemented):
@@ -43,7 +43,11 @@ class ColumnarConnector(Importer):
 
         self.csv_separator = options.get("csv_separator", ",")
 
-        self.conversation_separator = options.get("conversation_separator", r"#\w+#")
+        self.multi_doc_id_column = options.get("multi_doc_id_column", "multi_doc_id")
+        self.multi_document_delimiter = options.get(
+            "multi_document_delimiter", "#DOCUMENT#"
+        )
+        self.conversation_delimiter = options.get("conversation_separator", r"#\w+#")
 
     def import_data(self, data_path, document_type):
         if not self.check_data(data_path, document_type):
@@ -77,9 +81,7 @@ class ColumnarConnector(Importer):
 
     def _import_csv(self, data, document_type):
         if document_type == "document":
-            return self._create_documents(
-                pd.read_csv(data, sep=self.csv_separator)
-            )
+            return self._create_documents(pd.read_csv(data, sep=self.csv_separator))
         if document_type == "multi-document":
             return self._create_multi_document_csv(
                 pd.read_csv(data, sep=self.csv_separator)
@@ -91,17 +93,11 @@ class ColumnarConnector(Importer):
 
     def _import_parquet(self, data, document_type):
         if document_type == "document":
-            return self._create_documents(
-                pd.read_parquet(data)
-            )
+            return self._create_documents(pd.read_parquet(data))
         if document_type == "multi-document":
-            return self._create_multi_document_csv(
-                pd.read_parquet(data)
-            )
+            return self._create_multi_document_csv(pd.read_parquet(data))
         if document_type == "conversation":
-            return self._create_conversation_csv(
-                pd.read_parquet(data)
-            )
+            return self._create_conversation_csv(pd.read_parquet(data))
 
     def _create_documents(self, df: pd.DataFrame):
         if self.text_column not in df.columns:
@@ -116,12 +112,75 @@ class ColumnarConnector(Importer):
             if self.metadata_columns:
                 metadata = {col: row[col] for col in self.metadata_columns}
             else:
-                metadata = {k: v for k, v in row.items() if k not in ["text", "summary"]}
+                metadata = {
+                    k: v for k, v in row.items() if k not in ["text", "summary"]
+                }
             documents.append(Document(text, summary, metadata))
         return documents
 
     def _create_multi_document_csv(self, df: pd.DataFrame):
-        raise NotImplementedError
+        if self.text_column not in df.columns:
+            raise InvalidResourceError(
+                f"No '{self.text_column}' column found, please rename the text column to '{self.text_column}', and if "
+                f"you have a summary, rename that to '{self.summary_column}', or set the text_column and summary_column"
+            )
+        multidocs = []
+
+        if self.multi_doc_id_column in df.columns:
+            for i, group in df.groupby(self.multi_doc_id_column):
+                group_dict = group.to_dict(orient="list")
+                texts = group_dict[self.text_column]
+                summaries = group_dict[self.summary_column]
+                summary = next((s for s in summaries if s is not None), None)
+                if self.metadata_columns:
+                    metadata = {col: group_dict[col] for col in self.metadata_columns}
+                else:
+                    metadata = {
+                        k: v
+                        for k, v in group_dict.items()
+                        if k not in ["text", "summary"]
+                    }
+                multidocs.append(
+                    MultiDocument(
+                        [Document(t, None, None) for t in texts], summary, metadata
+                    )
+                )
+        else:
+            for i, row in df.iterrows():
+                text = row[self.text_column].split(self.multi_document_delimiter)
+                summary = row.get(self.summary_column, None)
+                if self.metadata_columns:
+                    metadata = {col: row[col] for col in self.metadata_columns}
+                else:
+                    metadata = {
+                        k: v for k, v in row.items() if k not in ["text", "summary"]
+                    }
+                multidocs.append(
+                    MultiDocument(
+                        [Document(t, None, None) for t in text], summary, metadata
+                    )
+                )
+        return multidocs
 
     def _create_conversation_csv(self, df: pd.DataFrame):
-        raise NotImplementedError
+        if self.text_column not in df.columns:
+            raise InvalidResourceError(
+                f"No '{self.text_column}' column found, please rename the text column to '{self.text_column}', and if "
+                f"you have a summary, rename that to '{self.summary_column}', or set the text_column and summary_column"
+            )
+        conversations = []
+        for i, row in df.iterrows():
+            text = row[self.text_column]
+            summary = row.get(self.summary_column, None)
+            if self.metadata_columns:
+                metadata = {col: row[col] for col in self.metadata_columns}
+            else:
+                metadata = {
+                    k: v for k, v in row.items() if k not in ["text", "summary"]
+                }
+            conversation_units = split_text_by_regex(text, self.conversation_delimiter)
+            text_units = []
+            for unit in conversation_units:
+                text_units.append(TextUnit(unit[1], unit[0]))
+            conversations.append(Conversation(text_units, summary, metadata))
+        return conversations
