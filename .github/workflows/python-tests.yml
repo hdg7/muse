@@ -18,11 +18,6 @@ jobs:
       python-version: '3.x'
   - name: Install Hatch
     uses: pypa/hatch@install
-  - name: Install MuSE
-    run: |
-      hatch build -t wheel      
-      python3 -m pip install --upgrade pip
-      python3 -m pip install dist/*.whl --break-system-packages
   - name: Run tests
     run: |
-      hatch test
+      hatch run test
