@@ -7,6 +7,7 @@ from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.utils.resource_errors import InvalidResourceError
+from muse.data_importer.fetcher import handle_uri, get_resource_type
 
 
 class ColumnarConnector(Importer):
@@ -32,6 +33,9 @@ class ColumnarConnector(Importer):
     def __init__(self, options: dict[str, any] = None):
         self._invalid_reason = None
 
+        if options is None:
+            options = {}
+
         self.text_column = options.get("text_column", "text")
         self.summary_column = options.get("summary_column", "summary")
 
@@ -39,52 +43,64 @@ class ColumnarConnector(Importer):
 
         self.csv_separator = options.get("csv_separator", ",")
 
-    def import_data(self, data, document_type):
-        if not self.check_data(data, document_type):
+        self.conversation_separator = options.get("conversation_separator", r"#\w+#")
+
+    def import_data(self, data_path, document_type):
+        if not self.check_data(data_path, document_type):
             raise InvalidResourceError("Invalid data", self._invalid_reason)
 
         if document_type not in ["document", "multi-document", "conversation"]:
             raise ValueError("Invalid document type")
 
-        if data["metadata"]["resource_type"] == "csv":
+        data_path = handle_uri(data_path)
+        data_type = get_resource_type(data_path)
+
+        data = self._read_data(data_path)
+
+        if data_type == "csv":
             return self._import_csv(data, document_type)
 
-        if data["metadata"]["resource_type"] == "parquet":
+        if data_type == "parquet":
             return self._import_parquet(data, document_type)
 
-    def check_data(self, data, document_type):
-        if data["metadata"]["resource_type"] not in ["csv", "parquet"]:
+    def check_data(self, data_path, document_type):
+        if get_resource_type(handle_uri(data_path)) not in ["csv", "parquet"]:
             self._invalid_reason = "File type is not csv or parquet"
             return False
 
         return True
 
+    @staticmethod
+    def _read_data(data_path):
+        with open(data_path, "rb") as file:
+            return BytesIO(file.read())
+
     def _import_csv(self, data, document_type):
         if document_type == "document":
             return self._create_documents(
-                pd.read_csv(StringIO(data["data"]), sep=self.csv_separator)
+                pd.read_csv(data, sep=self.csv_separator)
             )
         if document_type == "multi-document":
             return self._create_multi_document_csv(
-                pd.read_csv(StringIO(data["data"]), sep=self.csv_separator)
+                pd.read_csv(data, sep=self.csv_separator)
             )
         if document_type == "conversation":
             return self._create_conversation_csv(
-                pd.read_csv(StringIO(data["data"]), sep=self.csv_separator)
+                pd.read_csv(data, sep=self.csv_separator)
             )
 
     def _import_parquet(self, data, document_type):
         if document_type == "document":
             return self._create_documents(
-                pd.read_parquet(BytesIO(data["data"]))
+                pd.read_parquet(data)
             )
         if document_type == "multi-document":
             return self._create_multi_document_csv(
-                pd.read_parquet(BytesIO(data["data"]))
+                pd.read_parquet(data)
             )
         if document_type == "conversation":
             return self._create_conversation_csv(
-                pd.read_parquet(BytesIO(data["data"]))
+                pd.read_parquet(data)
             )
 
     def _create_documents(self, df: pd.DataFrame):

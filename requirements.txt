@@ -7,3 +7,5 @@ rouge
 pandas
 pyarrow
 ollama
+requests
+gitpython

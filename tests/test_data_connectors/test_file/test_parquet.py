@@ -11,16 +11,8 @@ def parquet_path():
     return os.path.join(os.path.dirname(__file__), "test.parquet")
 
 
-def test_fetch_data_parquet(parquet_path):
-    data = fetch_data(parquet_path)
-    assert data["metadata"]["resource_name"] == parquet_path
-    assert data["metadata"]["resource_type"] == "parquet"
-    assert data["metadata"]["data_kind"] is None
-
-
 def test_import_data_csv(parquet_path):
-    data = fetch_data(parquet_path)
-    documents = import_data(data, "document")
+    documents = import_data(parquet_path, "document")
     assert isinstance(documents, list)
     assert len(documents) == 10
     assert documents[0].text.startswith(

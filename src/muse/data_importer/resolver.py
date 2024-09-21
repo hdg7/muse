@@ -8,21 +8,21 @@ from muse.utils.resource_errors import UnknownResourceError
 
 
 def import_data(
-    data: RawData,
+    data_path: str,
     document_type: str,
     options: dict[str, any] = None
 ) -> Union[list[Document], list[MultiDocument]]:
     """
     Import raw data from a given path.
 
-    :param data: Raw data to be imported.
+    :param data_path: Path to the data to be imported.
     :param document_type: Type of document to import, either 'document' or 'multi-document'.
     :param options: Options to initialize the data importer.
     :return: Raw data.
     """
     for importer in Importer.__subclasses__():
         importer = importer(options)
-        if importer.check_data(data, document_type):
-            return importer.import_data(data, document_type)
+        if importer.check_data(data_path, document_type):
+            return importer.import_data(data_path, document_type)
 
-    raise UnknownResourceError(data["metadata"]["resource_name"])
+    raise UnknownResourceError(data_path)

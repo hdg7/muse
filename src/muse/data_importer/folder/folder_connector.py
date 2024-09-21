@@ -1,5 +1,7 @@
+import os
 from typing import Union
 
+from muse.data_importer.fetcher import handle_uri, get_resource_type
 from muse.data_importer.data_importer import Importer
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
@@ -25,21 +27,29 @@ class FolderConnector(Importer):
     def __init__(self, options: dict[str, any] = None):
         self._invalid_reason = None
 
-    def import_data(self, data, document_type):
-        if not self.check_data(data, document_type):
+        self.summary_suffix = options.get("summary_suffix", "_summary")
+        self.metadata_suffix = options.get("metadata_suffix", "_metadata")
+
+    def import_data(self, data_path, document_type):
+        if not self.check_data(data_path, document_type):
             raise InvalidResourceError("Invalid data", self._invalid_reason)
 
         if document_type not in ["document", "multi-document", "conversation"]:
             raise ValueError("Invalid document type")
 
+        data_path = handle_uri(data_path)
+
+        data = self._read_data(data_path)
+
         return self._import_folder(data, document_type)
 
-    def check_data(self, data, document_type):
-        if data["metadata"]["resource_type"] != "directory":
-            self._invalid_reason = "Resource type is not directory"
-            return False
+    def check_data(self, data_path, document_type):
+        data_path = handle_uri(data_path)
+        data_type = get_resource_type(data_path)
+        return data_type == "directory"
 
-        return True
+    def _read_data(self, data_path):
+        pass
 
     def _import_folder(
         self, data, document_type

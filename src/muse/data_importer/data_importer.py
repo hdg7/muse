@@ -27,12 +27,12 @@ class Importer(ABC):
 
     @abstractmethod
     def import_data(
-        self, data: RawData, document_type: str
+        self, data_path: str, document_type: str
     ) -> Union[list[Document], list[MultiDocument]]:
         """
         Import data from a given path by resolving the kind of data it is and returning the appropriate object.
 
-        :param data: The raw data to be imported.
+        :param data_path: The path to the data to be imported.
         :param document_type: Type of document to import, either 'document', 'multi-document', or 'conversation'.
         :return: Document, MultiDocument, or Conversation object.
         :raises ValueError: If the document type is not 'document', 'multi-document', or 'conversation'.
@@ -43,11 +43,11 @@ class Importer(ABC):
         pass
 
     @abstractmethod
-    def check_data(self, data: RawData, document_type: str) -> bool:
+    def check_data(self, data_path: str, document_type: str) -> bool:
         """
         Check if the data belongs to this connector.
 
-        :param data: The raw data to be checked.
+        :param data_path: Path to the data to be checked.
         :param document_type: Type of document to check, either 'document' or 'multi-document', or 'conversation'.
         :return: True if the data path belongs to this connector, False otherwise.
         :raises NotImplementedError: If the method is not implemented in the subclass.
