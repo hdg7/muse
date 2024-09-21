@@ -1,4 +1,4 @@
-from nltk import word_tokenize
+from nltk import word_tokenize, download
 from nltk.translate.bleu_score import corpus_bleu
 
 from muse.evaluation.evaluation import Evaluation
@@ -12,6 +12,7 @@ class BleuMetric(Evaluation):
     """
 
     def __init__(self, args):
+        download('punkt_tab')
         self.args = args
 
     def evaluate(

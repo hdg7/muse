@@ -1,3 +1,4 @@
+from nltk import download
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.parsers.plaintext import PlaintextParser
 from sumy.summarizers.lsa import LsaSummarizer
@@ -6,6 +7,10 @@ from muse.summarizer.summarizer import Summarizer
 
 
 class Sumy(Summarizer):
+    def __init__(self, params):
+        super().__init__(params)
+        download('punkt_tab')
+
     def summarize(self, texts) -> list[str]:
         if isinstance(texts[0], list):
             return self._summary_multi(texts)
