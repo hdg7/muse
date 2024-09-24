@@ -9,26 +9,17 @@ class OllamaMetric(Evaluation):
     """
 
     def __init__(self, params):
-        readability_model = params.get("readability_model", "qwen2")
-        factuality_model = params.get("factuality_model", "qwen2")
-        coverage_model = params.get("coverage_model", "qwen2")
+        faithfulness_model = params.get("faithfulness_model", "qwen2")
         coherence_model = params.get("coherence_model", "qwen2")
-        consistency_model = params.get("consistency_model", "qwen2")
         relevance_model = params.get("relevance_model", "qwen2")
 
-        self.readability_weight = params.get("readability_weight", 1)
-        self.factuality_weight = params.get("factuality_weight", 1)
-        self.coverage_weight = params.get("coverage_weight", 1)
-        self.coherence_weight = params.get("coherence_weight", 1)
-        self.consistency_weight = params.get("consistency_weight", 1)
-        self.relevance_weight = params.get("relevance_weight", 1)
+        self.faithfulness_model = faithfulness_model
+        self.coherence_model = coherence_model
+        self.relevance_model = relevance_model
 
         self.models = [
-            readability_model,
-            factuality_model,
-            coverage_model,
+            faithfulness_model,
             coherence_model,
-            consistency_model,
             relevance_model,
         ]
 
@@ -65,19 +56,10 @@ class OllamaMetric(Evaluation):
     def _evaluate_multi(self, summary, reference_text, reference_summary):
         pass
 
-    def _evaluate_readability(self, summary):
-        pass
-
-    def _evaluate_factuality(self, summary):
-        pass
-
-    def _evaluate_coverage(self, summary):
+    def _evaluate_faithfulness(self, summary):
         pass
 
     def _evaluate_coherence(self, summary):
-        pass
-
-    def _evaluate_consistency(self, summary):
         pass
 
     def _evaluate_relevance(self, summary):
@@ -87,3 +69,12 @@ class OllamaMetric(Evaluation):
     def _pull_models(models):
         for model in models:
             ollama.pull(model)
+
+    def _query_model(self, model, text: list[tuple[str, str]]):
+        # The text contains a list of messages, where each message is a tuple of the message and the author, e.g.:
+        # [
+        #     ("System", "You're an llm model to evaluate the summaries"),
+        #     ("User", "Evaluate the following summary on the following text: ..."),
+        # ]
+
+        pass

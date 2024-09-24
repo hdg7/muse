@@ -20,11 +20,17 @@ class SummarizerSystem(Enum):
     GenSim = "gensim"
     Sumy = "sumy"
 
+    def __str__(self) -> str:
+        return self.value
+
 
 class DataType(Enum):
-    SingleDocument = "single-document"
+    SingleDocument = "document"
     MultiDocument = "multi-document"
     Conversation = "conversation"
+
+    def __str__(self) -> str:
+        return self.value
 
 
 class EvaluationType(Enum):
@@ -32,21 +38,50 @@ class EvaluationType(Enum):
     Reference = "reference"
     LLM = "llm"
 
+    def __str__(self) -> str:
+        return self.value
+
 
 class Options(TypedDict):
     system: list[SummarizerSystem]
     data_type: DataType
     data: str
-    evaluation_type: list[EvaluationType]
+    evaluation_type: list[EvaluationType]  # May not be needed
     metrics: list[str]
     llm: list[str]
+    language: str
     output: str
     config: str
 
 
+def _parse_config(config: str) -> dict[str, any]:
+    # check if config is a file path
+    # if it is, read the file and return the contents
+    # else treat as json string and return the json object as a dict
+    import json
+    import os
+
+    if os.path.isfile(config):
+        with open(config, "r") as f:
+            return json.load(f)
+
+    return json.loads(config)
+
+
 def evaluate_metric(options: Options) -> None:
-    # This should be moved somewhere universal, so it can be reused in the library
-    raise NotImplementedError("Evaluation of metrics not yet implemented")
+    config = _parse_config(options["config"])
+
+    muse = Muse()
+    muse.set_data(options["data_type"], options["data"], options["language"], config)
+    # TODO: Add support for option passing to summarizer and evaluation too, we will just need to
+    #       check the config for names corresponding to the summarizer and evaluation methods selected
+    muse.add_summarizer(*options["system"])
+    muse.add_evaluation(*options["metrics"], *options["llm"])
+    results = muse.run()
+    if options["output"]:
+        pass
+    else:
+        print(results)
 
 
 class Muse:
@@ -59,16 +94,16 @@ class Muse:
 
         self.results: dict[str, dict[str, any]] = {}
 
-    def set_data(self, datatype: DataType, data_path: str, data_language: str):
+    def set_data(
+        self,
+        datatype: DataType,
+        data_path: str,
+        data_language: str,
+        options: dict[str, any] = None,
+    ):
         if not isinstance(datatype, DataType):
             datatype = DataType(datatype)
-        match datatype:
-            case DataType.SingleDocument:
-                self.data = import_data(data_path, "document")
-            case DataType.MultiDocument:
-                raise NotImplementedError("MultiDocument not yet implemented")
-            case DataType.Conversation:
-                raise NotImplementedError("Conversation not yet implemented")
+        self.data = import_data(data_path, str(datatype), data_language, options)
 
     def add_summarizer(
         self, *summarizers: SummarizerSystem | tuple[SummarizerSystem, dict[str, any]]
@@ -133,6 +168,7 @@ def main(options: Options | Namespace) -> int:
             "llm": options.llm,
             "output": options.output,
             "config": options.config,
+            "language": options.language,
         }
 
     options = cast(Options, options)

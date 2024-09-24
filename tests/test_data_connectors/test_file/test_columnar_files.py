@@ -38,14 +38,14 @@ def conversation_parquet_path():
 
 
 def test_import_document_csv(document_csv_path):
-    documents = import_data(document_csv_path, "document")
+    documents = import_data(document_csv_path, "document", "en")
     assert isinstance(documents, list)
     assert len(documents) == 4
     assert documents[-1].metadata["date"] == "2022-07-01 08:29:01"
 
 
 def test_import_document_parquet(document_parquet_path):
-    documents = import_data(document_parquet_path, "document")
+    documents = import_data(document_parquet_path, "document", "en")
     assert isinstance(documents, list)
     assert len(documents) == 10
     assert documents[0].text.startswith(
@@ -57,24 +57,24 @@ def test_import_document_parquet(document_parquet_path):
 
 
 def test_import_multi_doc_csv(multi_document_csv_path):
-    documents = import_data(multi_document_csv_path, "multi-document")
+    documents = import_data(multi_document_csv_path, "multi-document", "en")
     assert isinstance(documents, list)
     assert len(documents) == 2
 
 
 def test_import_multi_doc_parquet(multi_document_parquet_path):
-    documents = import_data(multi_document_parquet_path, "multi-document")
+    documents = import_data(multi_document_parquet_path, "multi-document", "en")
     assert isinstance(documents, list)
     assert len(documents) == 2
 
 
 def test_import_parquet_conversation(conversation_parquet_path):
-    documents = import_data(conversation_parquet_path, "conversation")
+    documents = import_data(conversation_parquet_path, "conversation", "en")
     assert isinstance(documents, list)
     assert len(documents) == 9
 
 
 def test_import_parquet_csv(conversation_csv_path):
-    documents = import_data(conversation_csv_path, "conversation")
+    documents = import_data(conversation_csv_path, "conversation", "en")
     assert isinstance(documents, list)
     assert len(documents) == 9

@@ -9,7 +9,7 @@ from muse.summarizer.summarizer import Summarizer
 class Sumy(Summarizer):
     def __init__(self, params):
         super().__init__(params)
-        download('punkt_tab')
+        download("punkt_tab")
 
     def summarize(self, texts) -> list[str]:
         if isinstance(texts[0], list):
