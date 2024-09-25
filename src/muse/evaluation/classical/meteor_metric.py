@@ -13,7 +13,7 @@ class MeteorMetric(Evaluation):
 
     def __init__(self, params):
         download("wordnet")
-        download('punkt_tab')
+        download("punkt_tab")
 
     def evaluate(
         self, summary, reference_text=None, reference_summary=None
