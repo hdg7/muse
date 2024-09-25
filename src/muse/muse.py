@@ -87,6 +87,7 @@ def evaluate_metric(options: Options) -> None:
 
     if not options["language"]:
         import warnings
+
         warnings.warn("No language specified, defaulting to English")
         options["language"] = "en"
 

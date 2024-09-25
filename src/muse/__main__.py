@@ -2,7 +2,8 @@ import sys
 from argparse import ArgumentParser, Namespace
 
 from .__about__ import __version__
-from .muse import DataType, EvaluationType, SummarizerSystem, main as entry_point
+from .muse import DataType, EvaluationType, SummarizerSystem
+from .muse import main as entry_point
 
 
 def validate_arguments(args: Namespace) -> Namespace:

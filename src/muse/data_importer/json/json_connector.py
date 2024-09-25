@@ -9,6 +9,7 @@ class JSONConnector(Importer):
 
     It can also be used to import subdata, i.e. data stored as json within other structures such as CSV files.
     """
+
     def __init__(self, options: dict[str, any] = None):
         pass
 
