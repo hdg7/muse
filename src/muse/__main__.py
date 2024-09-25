@@ -2,8 +2,7 @@ import sys
 from argparse import ArgumentParser, Namespace
 
 from .__about__ import __version__
-from .muse import DataType, EvaluationType, SummarizerSystem
-from .muse import main as entry_point
+from .muse import DataType, EvaluationType, SummarizerSystem, main as entry_point
 
 
 def validate_arguments(args: Namespace) -> Namespace:
@@ -68,7 +67,6 @@ def parse_arguments() -> Namespace:
         "-o",
         "--output",
         help="The output file to write the results to",
-        default="MuSE_results.csv",
     )
     optional.add_argument(
         "-c", "--config", help="The configuration file to use for evaluation"

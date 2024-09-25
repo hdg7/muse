@@ -13,7 +13,7 @@ from muse.evaluation.evaluation import Evaluation
 from muse.summarizer.extractive.sumy_connector import Sumy
 from muse.summarizer.summarizer import Summarizer
 
-__all__ = ["SummarizerSystem", "DataType", "EvaluationType", "Options", "Muse"]
+__all__ = ["SummarizerSystem", "DataType", "EvaluationType", "Options", "Muse", "main"]
 
 
 class SummarizerSystem(Enum):
@@ -55,9 +55,9 @@ class Options(TypedDict):
 
 
 def _parse_config(config: str) -> dict[str, any]:
-    # check if config is a file path
-    # if it is, read the file and return the contents
-    # else treat as json string and return the json object as a dict
+    if not config:
+        return {}
+
     import json
     import os
 
@@ -71,6 +71,28 @@ def _parse_config(config: str) -> dict[str, any]:
 def evaluate_metric(options: Options) -> None:
     config = _parse_config(options["config"])
 
+    if not options["metrics"]:
+        options["metrics"] = []
+    if not options["llm"]:
+        options["llm"] = []
+
+    if options["metrics"] == [] and options["llm"] == []:
+        raise ValueError("No metrics or llm specified")
+
+    if not options["system"]:
+        raise ValueError("No summarizer specified")
+
+    if not options["data"]:
+        raise ValueError("No data specified")
+
+    if not options["language"]:
+        import warnings
+        warnings.warn("No language specified, defaulting to English")
+        options["language"] = "en"
+
+    if not options["data_type"]:
+        raise ValueError("No data type specified")
+
     muse = Muse()
     muse.set_data(options["data_type"], options["data"], options["language"], config)
     # TODO: Add support for option passing to summarizer and evaluation too, we will just need to
@@ -79,7 +101,7 @@ def evaluate_metric(options: Options) -> None:
     muse.add_evaluation(*options["metrics"], *options["llm"])
     results = muse.run()
     if options["output"]:
-        pass
+        print(results)
     else:
         print(results)
 
@@ -160,10 +182,10 @@ class Muse:
 def main(options: Options | Namespace) -> int:
     if isinstance(options, Namespace):
         options = {
-            "system": options.system,
-            "data_type": options.type,
+            "system": [SummarizerSystem(system) for system in options.system],
+            "data_type": DataType(options.type),
             "data": options.data,
-            "evaluation_type": options.evType,
+            "evaluation_type": [EvaluationType(evType) for evType in options.evType],
             "metrics": options.metrics,
             "llm": options.llm,
             "output": options.output,
@@ -174,12 +196,14 @@ def main(options: Options | Namespace) -> int:
     options = cast(Options, options)
 
     try:
-        if options["evaluation_type"] == EvaluationType.Metrics:
+        if EvaluationType.Metrics in options["evaluation_type"]:
             evaluate_metric(options)
-        elif options["evaluation_type"] == EvaluationType.Reference:
+        elif EvaluationType.Reference in options["evaluation_type"]:
             raise NotImplementedError("Reference evaluation not yet implemented")
-        elif options["evaluation_type"] == EvaluationType.LLM:
+        elif EvaluationType.LLM in options["evaluation_type"]:
             raise NotImplementedError("Language model evaluation not yet implemented")
+        else:
+            raise ValueError("Invalid evaluation type")
     except Exception as e:
         print(f"Error: {e}")
         return 1
