@@ -52,7 +52,7 @@ ADD initScript.bash /home/$USER_NAME/initScript.bash
 RUN chmod 755 /home/$USER_NAME/initScript.bash
 
 # Set the user and the working directory
-COPY docs /home/$USER_NAME/docs
+#COPY docs /home/$USER_NAME/docs
 WORKDIR /home/$USER_NAME
 RUN chown -R user:user *
 
