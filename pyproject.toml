@@ -29,6 +29,7 @@ Issues = "https://github.com/hdg7/muse/issues"
 
 [project.scripts]
 muse = "muse.__main__:main"
+muse_fetch = "muse.__main__:fetch"
 
 [tool.hatch.envs.default]
 dependencies = [

@@ -4,6 +4,7 @@ from argparse import ArgumentParser, Namespace
 from .__about__ import __version__
 from .muse import DataType, EvaluationType, SummarizerSystem
 from .muse import main as entry_point
+from .utils.data_fetcher import main as data_fetcher
 
 
 def validate_arguments(args: Namespace) -> Namespace:
@@ -84,6 +85,10 @@ def parse_arguments() -> Namespace:
 
 def main():
     sys.exit(entry_point(parse_arguments()))
+
+
+def fetch():
+    data_fetcher()
 
 
 if __name__ == "__main__":

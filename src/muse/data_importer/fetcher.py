@@ -10,6 +10,8 @@ from urllib.parse import urlparse
 import git
 import requests
 
+from muse.utils.env import get_data_dir
+
 TMP_DIR = Path(tempfile.gettempdir())
 ONE_DAY_AGO = datetime.now() - timedelta(days=1)
 
@@ -35,6 +37,8 @@ def handle_uri(uri: str) -> str:
         return clone(uri)
     elif os.path.exists(uri):
         return extract(uri)
+    elif os.path.exists(Path(get_data_dir(), uri)):
+        return extract(str(Path(get_data_dir(), uri)))
     else:
         raise FileNotFoundError(f"File or folder not found at {uri}")
 

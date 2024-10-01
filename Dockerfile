@@ -59,8 +59,9 @@ RUN chown -R user:user *
 # Expose the port and set the environment variables
 EXPOSE 8888
 ENV MUSE_HOME=/home/$USER_NAME/muse
-ENV MUSE_OUTPUT=/home/$USER_NAME/outputs
 ENV MUSE_PLUGINS=/home/$USER_NAME/.muse/plugins
+ENV MUSE_DATA=/home/$USER_NAME/.muse/data
+ENV MUSE_MODELS=/home/$USER_NAME/.muse/models
 
 # Convert the file to Unix format (in case it was created/edited in Windows)
 RUN sed -i -e 's/\r$//' /home/user/initScript.bash

@@ -14,7 +14,7 @@ class JSONConnector(Importer):
         pass
 
     def import_data(self, data_path, document_type):
-        pass
+        raise NotImplementedError
 
     def check_data(self, data_path, document_type):
         try:
