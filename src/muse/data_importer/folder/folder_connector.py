@@ -61,11 +61,22 @@ class FolderConnector(Importer):
     def check_data(self, data_path, document_type):
         data_path = handle_uri(data_path)
         data_type = get_resource_type(data_path)
-        return data_type == "directory"
+        if data_type == "directory":
+            files = os.listdir(data_path)
+            if any(
+                [
+                    f.endswith(".source") or f.endswith(".target")
+                    for f in files
+                    if os.path.isfile(os.path.join(data_path, f))
+                ]
+            ):
+                self._invalid_reason = "Directory contains .source or .target files, so is not valid for the folder connector"
+                return False
+            return True
+        return False
 
     def _read_data(self, data_path):
         df = pd.DataFrame()
-
         files = os.listdir(data_path)
 
         for identifier in [

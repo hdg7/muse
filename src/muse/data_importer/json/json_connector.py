@@ -23,3 +23,7 @@ class JSONConnector(Importer):
             return True
         except json.JSONDecodeError:
             return False
+        except FileNotFoundError:
+            return False
+        except IsADirectoryError:
+            return False
