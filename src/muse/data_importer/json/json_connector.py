@@ -1,4 +1,5 @@
 import json
+from typing import Union
 
 from muse.data_importer.data_importer import Importer
 from muse.data_importer.fetcher import get_resource_type, handle_uri
@@ -129,7 +130,7 @@ class JSONConnector(Importer):
 
         return conversations
 
-    def load_single_json(self, json_string: str, document_type: str):
+    def load_single_json(self, json_string: str, document_type: str) -> Union[Document, MultiDocument, Conversation]:
         try:
             data = json.loads(json_string)
             data = self._import_data(data, document_type)

@@ -10,6 +10,7 @@ from muse.data_manager.conversation.conversation import Conversation, TextUnit
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.utils.resource_errors import InvalidResourceError
+from muse.data_importer.json.json_connector import JSONConnector
 
 
 class FolderConnector(Importer):
@@ -53,6 +54,24 @@ class FolderConnector(Importer):
             raise ValueError("Invalid document type")
 
         data_path = handle_uri(data_path)
+
+        if all([f.endswith(".json") for f in os.listdir(data_path)]):
+            files = []
+            for file in os.listdir(data_path):
+                with open(os.path.join(data_path, file), "r") as f:
+                    files.append(f.read())
+
+            if not all([JSONConnector.can_load_json(file) for file in files]):
+                raise InvalidResourceError("Invalid data", "JSON files are not valid")
+            else:
+                c = JSONConnector()
+                data = [c.load_single_json(file, document_type) for file in files]
+                return data
+
+        elif any([f.endswith(".json") for f in os.listdir(data_path)]):
+            raise InvalidResourceError(
+                "Invalid data", "Folder contains a mix of JSON and non-JSON files"
+            )
 
         data = self._read_data(data_path)
 
