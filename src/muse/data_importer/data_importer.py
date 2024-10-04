@@ -17,6 +17,8 @@ class Importer(ABC):
     - check_data_path: Check if the data path belongs to this connector.
     """
 
+    plugin = False
+
     @abstractmethod
     def __init__(self, options: dict[str, any]):
         """
