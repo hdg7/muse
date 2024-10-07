@@ -5,4 +5,4 @@ echo "Building MuSE"
 hatch build -t wheel
 
 echo "Installing MuSE"
-python3 -m pip install dist/*.whl --break-system-packages
+python3 -m pip install dist/*.whl --break-system-packages --force-reinstall

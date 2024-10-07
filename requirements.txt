@@ -9,3 +9,7 @@ pyarrow
 ollama
 requests
 gitpython
+torch
+transformers
+sentencepiece
+protobuf
