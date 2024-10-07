@@ -3,6 +3,7 @@ from typing import Union
 from muse.data_importer.data_importer import Importer
 from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
+from muse.data_manager.document.documentComplex import DocumentComplex
 from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.utils.plugins import import_from_plugin
 from muse.utils.resource_errors import UnknownResourceError
@@ -10,7 +11,7 @@ from muse.utils.resource_errors import UnknownResourceError
 
 def import_data(
     data_path: str, document_type: str, language: str, options: dict[str, any] = None
-) -> Union[list[Document], list[MultiDocument], list[Conversation]]:
+) -> Union[list[Document], list[DocumentComplex], list[MultiDocument], list[Conversation]]:
     """
     Import raw data from a given path. we first try to import the data using the plugins, if that fails, we try to import
     the data using the builtin importers.

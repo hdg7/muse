@@ -115,6 +115,17 @@ class SourceTargetConnector(Importer):
 
         return documents
 
+    # def _import_single_documentcomplex(self, files):
+    #     documents = []
+    #     for source, target, meta in files:
+    #         source_documents = source.split(self.separator)
+    #         target_documents = target.split(self.separator)
+    #         assert len(source_documents) == len(target_documents)
+    #         for i, (s, t) in enumerate(zip(source_documents, target_documents)):
+    #             documents.append(Document(s, t, {"resource_name": f"{meta}-{i}"}))
+
+    #     return documents
+
     def _import_multi_document(self, files):
         multi_documents = []
         for source, target, meta in files:
