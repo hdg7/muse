@@ -21,22 +21,22 @@ class mT5(Summarizer):
 
     def _summarize_single(self,text):
         WHITESPACE_HANDLER = lambda k: re.sub('\s+', ' ', re.sub('\n+', ' ', k.strip()))
-        input_ids = tokenizer(
-            [WHITESPACE_HANDLER(article_text)],
+        input_ids = self.tokenizer(
+            [WHITESPACE_HANDLER(text.text)],
             return_tensors="pt",
             padding="max_length",
             truncation=True,
             max_length=512
         )["input_ids"]
 
-        output_ids = model.generate(
+        output_ids = self.model.generate(
             input_ids=input_ids,
             max_length=84,
             no_repeat_ngram_size=2,
             num_beams=4
         )[0]
 
-        summary = tokenizer.decode(
+        summary = self.tokenizer.decode(
             output_ids,
             skip_special_tokens=True,
             clean_up_tokenization_spaces=False
