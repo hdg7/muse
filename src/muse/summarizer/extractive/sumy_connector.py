@@ -12,7 +12,7 @@ class Sumy(Summarizer):
         download("punkt_tab")
 
     def summarize(self, texts) -> list[str]:
-        if isinstance(texts[0], list):
+        if isinstance(texts, list):
             return self._summary_multi(texts)
         return [self._summarize_single(texts[0])]
 
