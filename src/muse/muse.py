@@ -129,7 +129,11 @@ class Muse:
         if not isinstance(datatype, DataType):
             datatype = DataType(datatype)
         self.data = import_data(data_path, str(datatype), data_language, options)
+        if isinstance(self.data, list):
+            if isinstance(self.data[0], Document):
+                self.data = [doc for doc in self.data if doc.text != ""]
 
+                
     def add_summarizer(
         self, *summarizers: SummarizerSystem | tuple[SummarizerSystem, dict[str, any]]
     ):
@@ -173,9 +177,9 @@ class Muse:
         results = {}
         for evaluation in self.evaluations:
             result = evaluation.evaluate(
-                summary,
-                reference_summary=[s.summary for s in self.data],
-                reference_text=[str(s) for s in self.data],
+                [elem for elem in summary if elem is not ''],
+                reference_summary=[s.summary for s in self.data if s.summary is not ''],
+                reference_text=[str(s) for s in self.data if str(s) is not ''],
             )
             results[evaluation.__class__.__name__] = result
         self.results[summarizer.__class__.__name__] = results
