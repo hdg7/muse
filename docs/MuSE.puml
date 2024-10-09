@@ -1,0 +1,89 @@
+@startuml
+!define C4P https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master
+!includeurl C4P/C4_Context.puml
+!includeurl C4P/C4_Container.puml
+!includeurl C4P/C4_Component.puml
+
+' Title
+title Context and Container Diagram for Muse System with Detailed Library Components and Inheritance Structure
+
+' Define the enterprise boundary
+Enterprise_Boundary(b0, "Muse System Boundary") {
+    Person(endUser, "End User", "A user who interacts with the system via CLI (potentially after being extended with plugins).")
+    Person(developer, "Developer", "A developer who extends the system using plugins or interacts via the library.")
+
+    ' Muse System Boundary
+    System_Boundary(museBoundary, "Muse System") {
+        System(museCLI, "muse CLI", "Command-line interface for interacting with Muse.")
+        System(museFetchCLI, "muse_fetch CLI", "Command-line interface for fetching content.")
+        System(pluginSystem, "Plugin System", "Allows developers to extend Muse via plugins.")
+
+        ' Muse Library Boundary
+        Container_Boundary(libBoundary, "Muse Library") {
+            Component(muse, "Muse", "Main entry point", "Handles the overall data flow in the system.")
+
+            ' Data Importer Boundary
+            Container_Boundary(dataImporterBoundary, "Data Importer") {
+                Component(importData, "import_data()", "Function", "Determines which importer to use.")
+                Component(importerABC, "Importer", "ABC", "Abstract base class for importers.")
+                Component(columnarImporter, "ColumnarImporter", "Class", "Handles columnar data import.")
+                Component(folderImporter, "FolderImporter", "Class", "Handles folder data import.")
+                Component(jsonImporter, "JSONImporter", "Class", "Handles JSON data import.")
+                Component(sourceTargetImporter, "SourceTargetImporter", "Class", "Handles source-target data import.")
+            }
+
+            ' Summarizer Boundary
+            Container_Boundary(summarizerBoundary, "Summarizer") {
+                Component(summarizerABC, "Summarizer", "ABC", "Abstract base class for summarizers.")
+                Component(pytorchConnector, "PytorchConnector", "Class", "Handles summarization with PyTorch.")
+                Component(gensimConnector, "GensimConnector", "Class", "Handles summarization with Gensim.")
+                Component(sumyConnector, "SumyConnector", "Class", "Handles summarization with Sumy.")
+            }
+
+            ' Evaluations Boundary
+            Container_Boundary(evaluationsBoundary, "Evaluations") {
+                Component(evaluationABC, "Evaluation", "ABC", "Abstract base class for evaluations.")
+                Component(bleu, "Bleu", "Class", "Handles BLEU evaluation.")
+                Component(meteor, "Meteor", "Class", "Handles Meteor evaluation.")
+                Component(rouge, "Rouge", "Class", "Handles ROUGE evaluation.")
+                Component(ollama, "Ollama", "Class", "Handles Ollama evaluation.")
+            }
+
+            Component(dataManager, "Data Manager", "Manages data formats and transformations.")
+            Component(utils, "Utils", "Provides utility functions used across the system.")
+        }
+    }
+}
+
+' Relationships
+BiRel(endUser, museCLI, "Uses")
+BiRel(endUser, museFetchCLI, "Uses")
+Rel(developer, muse, "Uses Muse Library")
+Rel(developer, pluginSystem, "Extends via plugins")
+Rel(muse, museCLI, "CLI uses Muse Library")
+Rel(muse, museFetchCLI, "CLI uses Muse Library")
+
+' Use skinparam to control arrow direction
+skinparam linetype ortho
+
+' Adjust the path of this relationship
+pluginSystem -[hidden]-> muse : "Extends Library functionality"
+pluginSystem --> muse : "Extends Library functionality"
+
+Rel(muse, importData, "Uses for data import")
+Rel(importData, importerABC, "Uses Importer ABC")
+Rel(importerABC, columnarImporter, "Implemented by ColumnarImporter")
+Rel(importerABC, folderImporter, "Implemented by FolderImporter")
+Rel(importerABC, jsonImporter, "Implemented by JSONImporter")
+Rel(importerABC, sourceTargetImporter, "Implemented by SourceTargetImporter")
+Rel(muse, summarizerABC, "Passes imported data to generate summaries")
+Rel(summarizerABC, pytorchConnector, "Implemented by PytorchConnector")
+Rel(summarizerABC, gensimConnector, "Implemented by GensimConnector")
+Rel(summarizerABC, sumyConnector, "Implemented by SumyConnector")
+Rel(muse, evaluationABC, "Passes summary to generate evaluations")
+Rel(evaluationABC, bleu, "Implemented by Bleu")
+Rel(evaluationABC, meteor, "Implemented by Meteor")
+Rel(evaluationABC, rouge, "Implemented by Rouge")
+Rel(evaluationABC, ollama, "Implemented by Ollama")
+Rel(importData, pluginSystem, "Checks for plugins")
+@enduml

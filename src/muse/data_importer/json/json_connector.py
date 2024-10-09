@@ -130,7 +130,9 @@ class JSONConnector(Importer):
 
         return conversations
 
-    def load_single_json(self, json_string: str, document_type: str) -> Union[Document, MultiDocument, Conversation]:
+    def load_single_json(
+        self, json_string: str, document_type: str
+    ) -> Union[Document, MultiDocument, Conversation]:
         try:
             data = json.loads(json_string)
             data = self._import_data(data, document_type)

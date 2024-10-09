@@ -5,14 +5,13 @@ from typing import TypedDict, Union, cast
 from muse.data_importer.resolver import import_data
 from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
-from muse.data_manager.document.documentComplex import DocumentComplex
 from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.evaluation.classical.bleu_metric import BleuMetric
 from muse.evaluation.classical.meteor_metric import MeteorMetric
 from muse.evaluation.classical.rouge_metric import RougeMetric
 from muse.evaluation.evaluation import Evaluation
+from muse.summarizer.abstractive.mT5 import MT5
 from muse.summarizer.extractive.sumy_connector import Sumy
-from muse.summarizer.abstractive.mT5 import mT5
 from muse.summarizer.summarizer import Summarizer
 
 __all__ = ["SummarizerSystem", "DataType", "EvaluationType", "Options", "Muse", "main"]
@@ -29,7 +28,6 @@ class SummarizerSystem(Enum):
 
 class DataType(Enum):
     SingleDocument = "document"
-    DocumentComplex = "documentcomplex"
     MultiDocument = "multi-document"
     Conversation = "conversation"
 
@@ -148,7 +146,7 @@ class Muse:
                 case SummarizerSystem.Sumy:
                     self.summarizers.append(Sumy(params))
                 case SummarizerSystem.mT5:
-                    self.summarizers.append(mT5(params))
+                    self.summarizers.append(MT5(params))
 
     def add_evaluation(self, *evaluations: str | tuple[str, dict[str, any]]):
         for evaluation in evaluations:

@@ -21,7 +21,7 @@ class Sumy(Summarizer):
         parser = PlaintextParser.from_string(str(text), Tokenizer("english"))
         summarizer = LsaSummarizer()
         summary = summarizer(parser.document, 1)
-        if (len(summary) == 0):
+        if len(summary) == 0:
             return ""
         return str(summary[0])
 

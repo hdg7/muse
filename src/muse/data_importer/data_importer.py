@@ -4,7 +4,6 @@ from typing import Union
 
 from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
-from muse.data_manager.document.documentComplex import DocumentComplex
 from muse.data_manager.multi_document.multi_document import MultiDocument
 
 
@@ -32,7 +31,7 @@ class Importer(ABC):
     @abstractmethod
     def import_data(
         self, data_path: str, document_type: str
-    ) -> Union[list[Document], list[DocumentComplex], list[MultiDocument], list[Conversation]]:
+    ) -> Union[list[Document], list[MultiDocument], list[Conversation]]:
         """
         Import data from a given path by resolving the kind of data it is and returning the appropriate object.
 

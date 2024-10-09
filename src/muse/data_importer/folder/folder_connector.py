@@ -6,11 +6,11 @@ import pandas as pd
 
 from muse.data_importer.data_importer import Importer, split_text_by_regex
 from muse.data_importer.fetcher import get_resource_type, handle_uri
+from muse.data_importer.json.json_connector import JSONConnector
 from muse.data_manager.conversation.conversation import Conversation, TextUnit
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.utils.resource_errors import InvalidResourceError
-from muse.data_importer.json.json_connector import JSONConnector
 
 
 class FolderConnector(Importer):

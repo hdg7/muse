@@ -5,9 +5,11 @@ from pytest import fixture
 from muse.data_importer import import_data
 from muse.summarizer import Sumy
 
+
 @fixture
 def document_path():
     return os.path.join(os.path.dirname(__file__), "doc")
+
 
 def test_import_document_source_target(document_path):
     documents = import_data(document_path, "document", "en")
@@ -20,7 +22,9 @@ def test_import_document_source_target(document_path):
             assert doc.text.startswith(
                 "The Met Office has issued a yellow weather warning for"
             )
-            assert doc.summary.startswith("Winds could reach gale force in Wales with stormy")
+            assert doc.summary.startswith(
+                "Winds could reach gale force in Wales with stormy"
+            )
     summary = sumy.summarize(documents)
     assert len(summary) == len(documents)
     print(summary[1])
