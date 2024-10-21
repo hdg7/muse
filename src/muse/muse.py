@@ -9,6 +9,7 @@ from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.evaluation.classical.bleu_metric import BleuMetric
 from muse.evaluation.classical.meteor_metric import MeteorMetric
 from muse.evaluation.classical.rouge_metric import RougeMetric
+from muse.evaluation.llm.ollama_metric import OllamaMetric
 from muse.evaluation.evaluation import Evaluation
 from muse.summarizer.abstractive.mT5 import MT5
 from muse.summarizer.extractive.sumy_connector import Sumy
@@ -165,6 +166,8 @@ class Muse:
                     self.evaluations.append(BleuMetric(params))
                 case "meteor":
                     self.evaluations.append(MeteorMetric(params))
+                case "ollama":
+                    self.evaluations.append(OllamaMetric(params))
 
     def run(self):
         for summarizer in self.summarizers:
