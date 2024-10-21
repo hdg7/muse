@@ -10,5 +10,6 @@ fi
 
 for element in $(ls $xlsum_path)
 do
-    echo "bash exp1_XLSum.bash $xlsum_path/$element"
+    echo "bash /home/ubuntu/dataMount/dataHector/muse/experiments/exp1_XLSum.bash $element ./outputs rouge sumy $xlsum_path/$element"
+    echo "bash /home/ubuntu/dataMount/dataHector/muse/experiments/exp1_XLSum.bash $element ./outputs rouge mT5 $xlsum_path/$element"
 done
