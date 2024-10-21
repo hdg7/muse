@@ -1,7 +1,8 @@
+import json
 from argparse import Namespace
 from enum import Enum
 from typing import TypedDict, Union, cast
-import json
+
 from muse.data_importer.resolver import import_data
 from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
@@ -9,8 +10,8 @@ from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.evaluation.classical.bleu_metric import BleuMetric
 from muse.evaluation.classical.meteor_metric import MeteorMetric
 from muse.evaluation.classical.rouge_metric import RougeMetric
-from muse.evaluation.llm.ollama_metric import OllamaMetric
 from muse.evaluation.evaluation import Evaluation
+from muse.evaluation.llm.ollama_metric import OllamaMetric
 from muse.summarizer.abstractive.mT5 import MT5
 from muse.summarizer.extractive.sumy_connector import Sumy
 from muse.summarizer.summarizer import Summarizer
@@ -112,10 +113,10 @@ def evaluate_metric(options: Options) -> None:
             json.dump(results, f)
         print(f"Writing summaries")
         with open(f"{options['output']}/summaries.json", "w") as f:
-            json.dump([s for s in muse.summary],f)
+            json.dump([s for s in muse.summary], f)
         print(f"Writing reference")
         with open(f"{options['output']}/reference.json", "w") as f:
-            json.dump([s.summary for s in muse.data if s.summary is not ''],f)
+            json.dump([s.summary for s in muse.data if s.summary is not ""], f)
         print(results)
     else:
         print(results)
@@ -145,7 +146,6 @@ class Muse:
             if isinstance(self.data[0], Document):
                 self.data = [doc for doc in self.data if doc.text != ""]
 
-                
     def add_summarizer(
         self, *summarizers: SummarizerSystem | tuple[SummarizerSystem, dict[str, any]]
     ):
@@ -191,9 +191,9 @@ class Muse:
         results = {}
         for evaluation in self.evaluations:
             result = evaluation.evaluate(
-                [elem for elem in self.summary if elem is not ''],
-                reference_summary=[s.summary for s in self.data if s.summary is not ''],
-                reference_text=[str(s) for s in self.data if str(s) is not ''],
+                [elem for elem in self.summary if elem is not ""],
+                reference_summary=[s.summary for s in self.data if s.summary is not ""],
+                reference_text=[str(s) for s in self.data if str(s) is not ""],
             )
             results[evaluation.__class__.__name__] = result
         self.results[summarizer.__class__.__name__] = results

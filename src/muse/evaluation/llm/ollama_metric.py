@@ -1,14 +1,24 @@
 import ollama
 from scipy.spatial.distance import cosine
-
 from sentence_transformers import SentenceTransformer
 
 from muse.evaluation.evaluation import Evaluation
 
 similarity_languages = {
     "sentence-transformers/distiluse-base-multilingual-cased-v1": [
-        "Arabic", "Chinese", "Dutch", "English", "French", "German", "Italian", "Korean", "Polish", "Portuguese",
-        "Russian", "Spanish", "Turkish"
+        "Arabic",
+        "Chinese",
+        "Dutch",
+        "English",
+        "French",
+        "German",
+        "Italian",
+        "Korean",
+        "Polish",
+        "Portuguese",
+        "Russian",
+        "Spanish",
+        "Turkish",
     ]
 }
 
@@ -20,8 +30,10 @@ class OllamaMetric(Evaluation):
 
     def __init__(self, params):
         self.key_fact_model = params.get("key_facts_model", "mistral-small")
-        self.similarity_model = params.get("similarity_model",
-                                           "sentence-transformers/distiluse-base-multilingual-cased-v1")
+        self.similarity_model = params.get(
+            "similarity_model",
+            "sentence-transformers/distiluse-base-multilingual-cased-v1",
+        )
 
         self.reference_free = params.get("reference_free", True)
         self.similarity_threshold = params.get("similarity_threshold", 0.5)
@@ -32,25 +44,39 @@ class OllamaMetric(Evaluation):
         self.language_target = params.get("language_target", "en")
 
         if self.similarity_model in similarity_languages.keys():
-            if not any([x.lower().startswith(self.language_source.lower()) for x in
-                        similarity_languages[self.similarity_model]]):
+            if not any(
+                [
+                    x.lower().startswith(self.language_source.lower())
+                    for x in similarity_languages[self.similarity_model]
+                ]
+            ):
                 old_model = self.similarity_model
-                self.similarity_model = "sentence-transformers/distiluse-base-multilingual-cased-v2"
+                self.similarity_model = (
+                    "sentence-transformers/distiluse-base-multilingual-cased-v2"
+                )
                 print(
-                    f"Warning: The language {self.language_source} is not supported by the model {old_model}. Switching to {self.similarity_model}")
-            if not any([x.lower().startswith(self.language_target.lower()) for x in
-                        similarity_languages[self.similarity_model]]):
+                    f"Warning: The language {self.language_source} is not supported by the model {old_model}. Switching to {self.similarity_model}"
+                )
+            if not any(
+                [
+                    x.lower().startswith(self.language_target.lower())
+                    for x in similarity_languages[self.similarity_model]
+                ]
+            ):
                 old_model = self.similarity_model
-                self.similarity_model = "sentence-transformers/distiluse-base-multilingual-cased-v2"
+                self.similarity_model = (
+                    "sentence-transformers/distiluse-base-multilingual-cased-v2"
+                )
                 print(
-                    f"Warning: The language {self.language_target} is not supported by the model {old_model}. Switching to {self.similarity_model}")
+                    f"Warning: The language {self.language_target} is not supported by the model {old_model}. Switching to {self.similarity_model}"
+                )
 
         self.model = SentenceTransformer(self.similarity_model)
 
         self._pull_models([self.key_fact_model])
 
     def evaluate(
-            self, summary, reference_text=None, reference_summary=None
+        self, summary, reference_text=None, reference_summary=None
     ) -> dict[str, any]:
         """
         Method to evaluate the summary
@@ -72,8 +98,8 @@ class OllamaMetric(Evaluation):
             reference_summary = [reference_summary]
 
         if summary and (
-                (reference_summary and len(summary) != len(reference_summary))
-                or (reference_text and len(summary) != len(reference_text))
+            (reference_summary and len(summary) != len(reference_summary))
+            or (reference_text and len(summary) != len(reference_text))
         ):
             raise ValueError(
                 "The number of summaries and reference summaries should be the same"
@@ -119,7 +145,11 @@ class OllamaMetric(Evaluation):
     def _evaluate_multi(self, summary, reference_text, reference_summary):
         return [
             self._evaluate_single(
-                summary[i], reference_text=None if not reference_text else reference_text[i], reference_summary=None if not reference_summary else reference_summary[i]
+                summary[i],
+                reference_text=None if not reference_text else reference_text[i],
+                reference_summary=(
+                    None if not reference_summary else reference_summary[i]
+                ),
             )
             for i in range(len(summary))
         ]
@@ -127,7 +157,11 @@ class OllamaMetric(Evaluation):
     def get_key_facts(self, text: str) -> list[str]:
         prompt = f"From the following text, generate a list of keyfacts, in bullet points, each should only be around a single sentence, and concise. \n\n{text}"
         response = self._query_model(self.key_fact_model, prompt)["response"]
-        return [x.strip().lstrip("•").lstrip("1234567890").strip() for x in response.split("\n") if x]
+        return [
+            x.strip().lstrip("•").lstrip("1234567890").strip()
+            for x in response.split("\n")
+            if x
+        ]
 
     def get_key_fact_correspondence(self, f: list[str], g: list[str]) -> list[tuple]:
         # Combine by the threshold
@@ -160,10 +194,29 @@ class OllamaMetric(Evaluation):
         if self.similarity_pair_method == "max":
             for source_fact in f:
                 max_sim = max([pair[2] for pair in pairs if pair[0] == source_fact])
-                max_pair = [pair for pair in pairs if pair[0] == source_fact and pair[2] == max_sim][0]
+                max_pair = [
+                    pair
+                    for pair in pairs
+                    if pair[0] == source_fact and pair[2] == max_sim
+                ][0]
                 pairs = [pair for pair in pairs if pair[0] != source_fact]
                 pairs.append(max_pair)
-            pairs = [(pair[0], None if pair[2] is not None and pair[2] < self.similarity_threshold else pair[1], None if pair[2] is not None and pair[2] < self.similarity_threshold else pair[2]) for pair in pairs]
+            pairs = [
+                (
+                    pair[0],
+                    (
+                        None
+                        if pair[2] is not None and pair[2] < self.similarity_threshold
+                        else pair[1]
+                    ),
+                    (
+                        None
+                        if pair[2] is not None and pair[2] < self.similarity_threshold
+                        else pair[2]
+                    ),
+                )
+                for pair in pairs
+            ]
         else:
             raise ValueError("The similarity pair method is not valid")
 
