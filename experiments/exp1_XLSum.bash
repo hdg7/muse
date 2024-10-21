@@ -1,17 +1,25 @@
 #!/bin/bash
 
+language=$1
+output_dir=$2
+metric=$3
+model=$4
+data_dir=$5
+
 # If the first argument is not provided, use the default path
-if [ -z $1 ]
+if [ -z $data_dir ]
 then
-	xlsum_path="/home/ubuntu/dataMount/dataHector/XLSum_input/individual/english"
-else
-	xlsum_path=$1
+	data_dir="/home/ubuntu/dataMount/dataHector/XLSum_input/individual/english"
 fi
 
 
-mkdir -p $xlsum_path/docs
-cat $xlsum_path/train.source | head -n 100 > $xlsum_path/docs/train.source 
-cat $xlsum_path/train.target | head -n 100 > $xlsum_path/docs/train.target
-muse -s sumy -t document -d $xlsum_path/docs/ -e metrics -m "rouge" -l "en" > $xlsum_path/docs/sumy_rouge.txt
-muse -s mT5 -t document -d $xlsum_path/docs/ -e metrics -m "rouge" -l "en" > $xlsum_path/docs/mT5_rouge.txt
+mkdir -p $data_dir/docs
+cat $data_dir/train.source | head -n 1000 > $data_dir/docs/train.source 
+cat $data_dir/train.target | head -n 1000 > $data_dir/docs/train.target
+# Check if the output directory exists
+mkdir -p $output_dir/$language/$model/$metric
+
+muse -s $model -t document -d $data_dir/docs/ -e metrics -m $metric -l $language -o $output_dir/$language/$model/$metric/
+
+
 
