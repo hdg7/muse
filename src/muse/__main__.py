@@ -12,6 +12,10 @@ def validate_arguments(args: Namespace) -> Namespace:
         raise ValueError("The --metrics argument is required for metrics evaluation")
     if args.evType == "llm" and not args.llm:
         raise ValueError("The --llm argument is required for language model evaluation")
+
+    if args.use_cache and not args.output:
+        raise ValueError("The --output argument is required when using cached data")
+
     return args
 
 
@@ -68,7 +72,7 @@ def parse_arguments() -> Namespace:
     optional.add_argument(
         "-o",
         "--output",
-        help="The output file to write the results to",
+        help="The output folder to write the results to",
     )
     optional.add_argument(
         "-c", "--config", help="The configuration file to use for evaluation"
@@ -78,6 +82,9 @@ def parse_arguments() -> Namespace:
 
     run_config.add_argument(
         "-v", "--verbose", action="count", default=0, help="Increase output verbosity"
+    )
+    run_config.add_argument(
+        "--use-cache", action="store_true", help="Use cached data for evaluation, must provide an output folder if wish to use this"
     )
 
     return validate_arguments(parser.parse_args())
