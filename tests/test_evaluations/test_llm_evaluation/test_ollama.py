@@ -1,6 +1,12 @@
+import os
+
+from pytest import mark
+
 from muse.evaluation import OllamaMetric
 
 
+# TODO: Implement complete test for OllamaMetric
+@mark.skipif(os.getenv("SKIP_INTENSIVE_TESTS") == "true", reason="Skipping long tests")
 def test_ollama_metric_single():
     ollama_metric = OllamaMetric({})
     result = ollama_metric.evaluate(

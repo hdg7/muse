@@ -1,6 +1,6 @@
 import os
 
-from pytest import fixture
+from pytest import fixture, mark
 
 from muse.data_importer import import_data
 from muse.evaluation.classical.rouge_metric import RougeMetric
@@ -12,6 +12,7 @@ def document_path():
     return os.path.join(os.path.dirname(__file__), "xlsum")
 
 
+@mark.skipif(os.getenv("SKIP_INTENSIVE_TESTS") == "true", reason="Skipping long tests")
 def test_import_document_source_target(document_path):
     documents = import_data(document_path, "document", "en")
     documents = [doc for doc in documents if doc.text != ""]
