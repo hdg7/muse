@@ -28,20 +28,20 @@ class OllamaMetric(Evaluation):
     Class to evaluate the OLLAMA metric
     """
 
-    def __init__(self, params):
-        self.key_fact_model = params.get("key_facts_model", "mistral-small")
-        self.similarity_model = params.get(
+    def __init__(self, options):
+        self.key_fact_model = options.get("key_facts_model", "mistral-small")
+        self.similarity_model = options.get(
             "similarity_model",
             "sentence-transformers/distiluse-base-multilingual-cased-v1",
         )
 
-        self.reference_free = params.get("reference_free", True)
-        self.similarity_threshold = params.get("similarity_threshold", 0.5)
+        self.reference_free = options.get("reference_free", True)
+        self.similarity_threshold = options.get("similarity_threshold", 0.5)
 
-        self.similarity_pair_method = params.get("similarity_pair_method", "max")
+        self.similarity_pair_method = options.get("similarity_pair_method", "max")
 
-        self.language_source = params.get("language_source", "en")
-        self.language_target = params.get("language_target", "en")
+        self.language_source = options.get("language_source", "en")
+        self.language_target = options.get("language_target", "en")
 
         if self.similarity_model in similarity_languages.keys():
             if not any(
@@ -252,7 +252,9 @@ class OllamaMetric(Evaluation):
         pass
 
     def calculate_density(self, p: list[tuple]) -> float:
-        return (0.5 * self.calculate_completeness(p)) + (0.5 * self.calculate_factuality(p))
+        return (0.5 * self.calculate_completeness(p)) + (
+            0.5 * self.calculate_factuality(p)
+        )
 
     @staticmethod
     def calculate_coherence(source: str):

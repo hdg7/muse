@@ -84,7 +84,9 @@ def parse_arguments() -> Namespace:
         "-v", "--verbose", action="count", default=0, help="Increase output verbosity"
     )
     run_config.add_argument(
-        "--use-cache", action="store_true", help="Use cached data for evaluation, must provide an output folder if wish to use this"
+        "--use-cache",
+        action="store_true",
+        help="Use cached data for evaluation, must provide an output folder if wish to use this",
     )
 
     return validate_arguments(parser.parse_args())

@@ -1,5 +1,5 @@
-import os
 import json
+import os
 from argparse import Namespace
 from enum import Enum
 from typing import TypedDict, Union, cast
@@ -8,25 +8,12 @@ from muse.data_importer.resolver import import_data
 from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
-from muse.evaluation.classical.bleu_metric import BleuMetric
-from muse.evaluation.classical.meteor_metric import MeteorMetric
-from muse.evaluation.classical.rouge_metric import RougeMetric
 from muse.evaluation.evaluation import Evaluation
-from muse.evaluation.llm.ollama_metric import OllamaMetric
-from muse.summarizer.abstractive.mT5 import MT5
-from muse.summarizer.extractive.sumy_connector import Sumy
+from muse.evaluation.resolver import resolve_evaluator
+from muse.summarizer.resolver import get_available_summarizers, resolve_summarizer
 from muse.summarizer.summarizer import Summarizer
 
 __all__ = ["SummarizerSystem", "DataType", "EvaluationType", "Options", "Muse", "main"]
-
-
-class SummarizerSystem(Enum):
-    GenSim = "gensim"
-    Sumy = "sumy"
-    mT5 = "mT5"
-
-    def __str__(self) -> str:
-        return self.value
 
 
 class DataType(Enum):
@@ -47,11 +34,21 @@ class EvaluationType(Enum):
         return self.value
 
 
+def enum_str(self):
+    return self.value
+
+
+SummarizerSystem = Enum(
+    "SummarizerSystem", {s: s.lower() for s in get_available_summarizers()}
+)
+SummarizerSystem.__str__ = enum_str
+
+
 class Options(TypedDict):
     system: list[SummarizerSystem]
     data_type: DataType
     data: str
-    evaluation_type: list[EvaluationType]  # May not be needed
+    evaluation_type: list[EvaluationType]
     metrics: list[str]
     llm: list[str]
     language: str
@@ -159,14 +156,8 @@ class Muse:
             else:
                 params = {}
             if not isinstance(summarizer, SummarizerSystem):
-                summarizer = SummarizerSystem(summarizer)
-            match summarizer:
-                case SummarizerSystem.GenSim:
-                    raise NotImplementedError("GenSim not yet implemented")
-                case SummarizerSystem.Sumy:
-                    self.summarizers.append(Sumy(params))
-                case SummarizerSystem.mT5:
-                    self.summarizers.append(MT5(params))
+                summarizer = SummarizerSystem(summarizer.lower())
+            self.summarizers.append(resolve_summarizer(str(summarizer), params))
 
     def add_evaluation(self, *evaluations: str | tuple[str, dict[str, any]]):
         for evaluation in evaluations:
@@ -174,15 +165,7 @@ class Muse:
                 evaluation, params = evaluation
             else:
                 params = {}
-            match evaluation:
-                case "rouge":
-                    self.evaluations.append(RougeMetric(params))
-                case "bleu":
-                    self.evaluations.append(BleuMetric(params))
-                case "meteor":
-                    self.evaluations.append(MeteorMetric(params))
-                case "ollama":
-                    self.evaluations.append(OllamaMetric(params))
+            self.evaluations.append(resolve_evaluator(evaluation, params))
 
     def run(self):
         if self.use_cache:
@@ -200,7 +183,9 @@ class Muse:
 
     def _evaluate_summarizer(self, summarizer: Summarizer) -> None:
         if not self.use_cache:
-            self.summaries[summarizer.__class__.__name__] = summarizer.summarize(self.data)
+            self.summaries[summarizer.__class__.__name__] = summarizer.summarize(
+                self.data
+            )
 
         summary = self.summaries[summarizer.__class__.__name__]
 

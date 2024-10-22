@@ -32,4 +32,14 @@ def import_data(
     raise UnknownResourceError(data_path)
 
 
+def get_available_importers() -> list[str]:
+    """
+    Get all the available importers.
+
+    :return: List of available importers.
+    """
+
+    return [importer.__name__ for importer in Importer.__subclasses__()]
+
+
 import_from_plugin("importer", Importer, "data_importer", "importers", "data_importers")
