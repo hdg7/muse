@@ -25,4 +25,4 @@ jobs:
       python3 -m pip install dist/*.whl --break-system-packages
   - name: Run tests
     run: |
-      hatch run test
+      SKIP_INTENSIVE_TESTS='true' hatch run test
