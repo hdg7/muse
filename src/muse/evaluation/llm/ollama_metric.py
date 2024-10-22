@@ -125,18 +125,14 @@ class OllamaMetric(Evaluation):
             reference_key_facts, summary_key_facts
         )
 
-        # Filter out non pairs (where one of the pairs is None <=> similarity is None)
-        factuality = self.calculate_factuality(
-            [pair[2] for pair in key_fact_correspondence if pair[2] is not None]
-        )
-
-        completeness = self.calculate_completeness(
-            [pair[2] for pair in key_fact_correspondence]
-        )
+        factuality = self.calculate_factuality(key_fact_correspondence)
+        completeness = self.calculate_completeness(key_fact_correspondence)
+        density = self.calculate_density(key_fact_correspondence)
 
         return {
             "factuality": factuality,
             "completeness": completeness,
+            "density": density,
             "key_fact_correspondence": key_fact_correspondence,
             "reference_key_facts": reference_key_facts,
             "summary_key_facts": summary_key_facts,
@@ -238,24 +234,25 @@ class OllamaMetric(Evaluation):
             ollama.pull(model)
 
     @staticmethod
-    def calculate_factuality(p: list[float]) -> float:
+    def calculate_factuality(p: list[tuple]) -> float:
+        p = [pair[2] for pair in p if pair[2] is not None]
         if len(p) == 0:
             return 0
         return sum([x for x in p]) / len(p)
 
     @staticmethod
-    def calculate_completeness(p: list[float]) -> float:
+    def calculate_completeness(p: list[tuple]) -> float:
+        p = [pair[2] for pair in p]
         if len(p) == 0:
             return 0
         return len([x for x in p if x is not None]) / len(p)
 
     @staticmethod
-    def calculate_comprehension(*args) -> float:
+    def calculate_comprehension(p: list[tuple]) -> float:
         pass
 
-    @staticmethod
-    def calculate_density(*args) -> float:
-        pass
+    def calculate_density(self, p: list[tuple]) -> float:
+        return (0.5 * self.calculate_completeness(p)) + (0.5 * self.calculate_factuality(p))
 
     @staticmethod
     def calculate_coherence(source: str):
