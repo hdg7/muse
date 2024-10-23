@@ -10,6 +10,8 @@ class Summarizer(ABC):
     Abstract class for summarization algorithms
     """
 
+    plugin = False
+
     def __init__(self, params: dict[str, any]):
         """
         Constructor for the Summarizer class

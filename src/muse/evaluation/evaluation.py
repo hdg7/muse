@@ -6,6 +6,8 @@ class Evaluation(ABC):
     Abstract class for evaluation metrics
     """
 
+    plugin = False
+
     @abstractmethod
     def __init__(self, params: dict[str, any]):
         """

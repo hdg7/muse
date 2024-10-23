@@ -9,7 +9,7 @@ def resolve_summarizer(summarizer: str, options: dict[str, any] = None) -> Summa
 
     :param summarizer: The summarizer to import.
     :param options: Options to initialize the evaluation metric.
-    :return: The evaluation metric.
+    :return: The summarizer.
     :raises UnknownResourceError: If the evaluation metric is not found.
     """
 
