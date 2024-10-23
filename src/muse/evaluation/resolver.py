@@ -16,7 +16,8 @@ def resolve_evaluator(evaluation: str, options: dict[str, any] = None) -> Evalua
     importers = Evaluation.__subclasses__()
     importers.sort(key=lambda x: x.plugin, reverse=True)
     for importer in importers:
-        if importer.__name__.lower() == evaluation.lower():
+        possible_names = [evaluation.lower(), f"{evaluation}Metric".lower()]
+        if importer.__name__.lower() in possible_names:
             return importer(options)
 
     raise UnknownResourceError(evaluation)
