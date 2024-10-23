@@ -2,17 +2,12 @@ import sys
 from argparse import ArgumentParser, Namespace
 
 from .__about__ import __version__
-from .muse import DataType, EvaluationType, SummarizerSystem
+from .muse import DataType, SummarizerSystem, EvaluationSystem
 from .muse import main as entry_point
 from .utils.data_fetcher import main as data_fetcher
 
 
 def validate_arguments(args: Namespace) -> Namespace:
-    if args.evType == "metrics" and not args.metrics:
-        raise ValueError("The --metrics argument is required for metrics evaluation")
-    if args.evType == "llm" and not args.llm:
-        raise ValueError("The --llm argument is required for language model evaluation")
-
     if args.use_cache and not args.output:
         raise ValueError("The --output argument is required when using cached data")
 
@@ -54,21 +49,15 @@ def parse_arguments() -> Namespace:
         required=True,
     )
     required.add_argument(
-        "-e",
-        "--evType",
+        "-m",
+        "--metrics",
         action="append",
-        choices=[item.value for item in EvaluationType],
-        help="The type of evaluation to perform",
-        required=True,
+        help="The metrics to use for evaluation",
+        choices=[item.value for item in EvaluationSystem],
     )
 
     optional = parser.add_argument_group("optional arguments")
-
-    optional.add_argument(
-        "-m", "--metrics", action="append", help="The metrics to use for evaluation"
-    )
     optional.add_argument("-l", "--language", help="The language of the data")
-    optional.add_argument("--llm", help="Large language model to use for evaluation")
     optional.add_argument(
         "-o",
         "--output",

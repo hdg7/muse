@@ -9,26 +9,17 @@ from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.evaluation.evaluation import Evaluation
-from muse.evaluation.resolver import resolve_evaluator
+from muse.evaluation.resolver import resolve_evaluator, get_available_evaluators
 from muse.summarizer.resolver import get_available_summarizers, resolve_summarizer
 from muse.summarizer.summarizer import Summarizer
 
-__all__ = ["SummarizerSystem", "DataType", "EvaluationType", "Options", "Muse", "main"]
+__all__ = ["SummarizerSystem", "EvaluationSystem", "DataType", "Options", "Muse", "main"]
 
 
 class DataType(Enum):
     SingleDocument = "document"
     MultiDocument = "multi-document"
     Conversation = "conversation"
-
-    def __str__(self) -> str:
-        return self.value
-
-
-class EvaluationType(Enum):
-    Metrics = "metrics"
-    Reference = "reference"
-    LLM = "llm"
 
     def __str__(self) -> str:
         return self.value
@@ -43,14 +34,17 @@ SummarizerSystem = Enum(
 )
 SummarizerSystem.__str__ = enum_str
 
+EvaluationSystem = Enum(
+    "EvaluationSystem", {s: s.lower() for s in get_available_evaluators()}
+)
+EvaluationSystem.__str__ = enum_str
+
 
 class Options(TypedDict):
     system: list[SummarizerSystem]
     data_type: DataType
     data: str
-    evaluation_type: list[EvaluationType]
-    metrics: list[str]
-    llm: list[str]
+    metrics: list[EvaluationSystem]
     language: str
     output: str
     config: str
@@ -75,12 +69,7 @@ def evaluate_metric(options: Options) -> None:
     config = _parse_config(options["config"])
 
     if not options["metrics"]:
-        options["metrics"] = []
-    if not options["llm"]:
-        options["llm"] = []
-
-    if options["metrics"] == [] and options["llm"] == []:
-        raise ValueError("No metrics or llm specified")
+        raise ValueError("No metrics specified")
 
     if not options["system"]:
         raise ValueError("No summarizer specified")
@@ -102,7 +91,7 @@ def evaluate_metric(options: Options) -> None:
     # TODO: Add support for option passing to summarizer and evaluation too, we will just need to
     #       check the config for names corresponding to the summarizer and evaluation methods selected
     muse.add_summarizer(*options["system"])
-    muse.add_evaluation(*options["metrics"], *options["llm"])
+    muse.add_evaluation(*options["metrics"])
     results = muse.run()
     if options["output"]:
         os.makedirs(options["output"], exist_ok=True)
@@ -209,9 +198,7 @@ def main(options: Options | Namespace) -> int:
             "system": [SummarizerSystem(system) for system in options.system],
             "data_type": DataType(options.type),
             "data": options.data,
-            "evaluation_type": [EvaluationType(evType) for evType in options.evType],
-            "metrics": options.metrics,
-            "llm": options.llm,
+            "metrics": [EvaluationSystem(metric) for metric in options.metrics],
             "output": options.output,
             "config": options.config,
             "language": options.language,
@@ -221,14 +208,7 @@ def main(options: Options | Namespace) -> int:
     options = cast(Options, options)
 
     try:
-        if EvaluationType.Metrics in options["evaluation_type"]:
-            evaluate_metric(options)
-        elif EvaluationType.Reference in options["evaluation_type"]:
-            raise NotImplementedError("Reference evaluation not yet implemented")
-        elif EvaluationType.LLM in options["evaluation_type"]:
-            raise NotImplementedError("Language model evaluation not yet implemented")
-        else:
-            raise ValueError("Invalid evaluation type")
+        evaluate_metric(options)
     except Exception as e:
         print(f"Error: {e}")
         return 1
