@@ -103,7 +103,7 @@ def evaluate_metric(options: Options) -> None:
             json.dump(muse.summaries, f)
         print(f"Writing reference")
         with open(f"{options['output']}/reference.json", "w") as f:
-            json.dump([s.summary for s in muse.data if s.summary is not ""], f)
+            json.dump([s.summary for s in muse.data if s.summary != ""], f)
         print(results)
     else:
         print(results)
@@ -181,9 +181,9 @@ class Muse:
         results = {}
         for evaluation in self.evaluations:
             result = evaluation.evaluate(
-                [elem for elem in summary if elem is not ""],
-                reference_summary=[s.summary for s in self.data if s.summary is not ""],
-                reference_text=[str(s) for s in self.data if str(s) is not ""],
+                [elem for elem in summary if elem != ""],
+                reference_summary=[s.summary for s in self.data if s.summary != ""],
+                reference_text=[str(s) for s in self.data if str(s) != ""],
             )
             results[evaluation.__class__.__name__] = result
         self.results[summarizer.__class__.__name__] = results
