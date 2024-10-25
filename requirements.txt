@@ -1,4 +1,4 @@
-gensim==3.8.0
+gensim
 sumy
 nltk
 jupyter
@@ -14,3 +14,4 @@ transformers
 sentencepiece
 protobuf
 sentence-transformers
+spacy
