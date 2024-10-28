@@ -42,4 +42,24 @@ def get_available_importers() -> list[str]:
     return [importer.__name__ for importer in Importer.__subclasses__()]
 
 
+def get_importers_options() -> list[tuple[str, dict[str, any]]]:
+    """
+    Get the options for all the available importers.
+
+    :return: List of tuples containing the name of the importer and its options.
+    """
+
+    return [
+        (
+            importer.__name__,
+            (
+                importer.__init__.valid_options()
+                if hasattr(importer.__init__, "valid_options")
+                else {}
+            ),
+        )
+        for importer in Importer.__subclasses__()
+    ]
+
+
 import_from_plugin("importer", Importer, "data_importer", "importers", "data_importers")

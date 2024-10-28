@@ -3,6 +3,7 @@ from scipy.spatial.distance import cosine
 from sentence_transformers import SentenceTransformer
 
 from muse.evaluation.evaluation import Evaluation
+from muse.utils.decorators import with_valid_options
 
 similarity_languages = {
     "sentence-transformers/distiluse-base-multilingual-cased-v1": [
@@ -28,7 +29,39 @@ class OllamaMetric(Evaluation):
     Class to evaluate the OLLAMA metric
     """
 
+    @with_valid_options(
+        key_facts_model={
+            "type": str,
+            "default": "mistral-small",
+            "help": "The model to use for key facts",
+        },
+        similarity_model={
+            "type": str,
+            "default": "sentence-transformers/distiluse-base-multilingual-cased-v1",
+            "help": "The model to use for similarity",
+        },
+        reference_free={
+            "type": bool,
+            "default": True,
+            "help": "Whether to use reference text for key facts",
+        },
+        similarity_threshold={
+            "type": float,
+            "default": 0.5,
+            "help": "The similarity threshold",
+        },
+        similarity_pair_method={
+            "type": str,
+            "default": "max",
+            "help": "The similarity pair method",
+        },
+        language_source={"type": str, "default": "en", "help": "The source language"},
+        language_target={"type": str, "default": "en", "help": "The target language"},
+    )
     def __init__(self, options):
+        if not options:
+            options = {}
+
         self.key_fact_model = options.get("key_facts_model", "mistral-small")
         self.similarity_model = options.get(
             "similarity_model",

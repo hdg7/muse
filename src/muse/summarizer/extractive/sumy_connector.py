@@ -4,11 +4,14 @@ from sumy.parsers.plaintext import PlaintextParser
 from sumy.summarizers.lsa import LsaSummarizer
 
 from muse.summarizer.summarizer import Summarizer
+from muse.utils.decorators import with_valid_options
 
 
 class Sumy(Summarizer):
-    def __init__(self, params):
-        super().__init__(params)
+    @with_valid_options()
+    def __init__(self, options):
+        if not options:
+            options = {}
         download("punkt_tab")
 
     def summarize(self, texts) -> list[str]:

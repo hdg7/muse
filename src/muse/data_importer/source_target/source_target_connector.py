@@ -5,6 +5,7 @@ from muse.data_importer.fetcher import get_resource_type, handle_uri
 from muse.data_manager.conversation.conversation import Conversation, TextUnit
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
+from muse.utils.decorators import with_valid_options
 
 
 class SourceTargetConnector(Importer):
@@ -15,6 +16,23 @@ class SourceTargetConnector(Importer):
     or a single file (either .source or .target), where the other file is expected to be in the same directory.
     """
 
+    @with_valid_options(
+        separator={
+            "type": str,
+            "default": "\n",
+            "help": "The separator for the source and target.",
+        },
+        multi_document_delimiter={
+            "type": str,
+            "default": "#DOCUMENT#",
+            "help": "The delimiter for multi documents (used within the column to separate documents).",
+        },
+        conversation_separator={
+            "type": str,
+            "default": r"#\w+#",
+            "help": "The regex to separate conversations.",
+        },
+    )
     def __init__(self, options: dict[str, any] = None):
         if options is None:
             options = {}
@@ -40,9 +58,10 @@ class SourceTargetConnector(Importer):
             else:
                 target_path = _data_path
                 source_path = data_path.replace(".target", ".source")
-            with open(source_path, "r") as source_file, open(
-                target_path, "r"
-            ) as target_file:
+            with (
+                open(source_path, "r") as source_file,
+                open(target_path, "r") as target_file,
+            ):
                 source = source_file.read()
                 target = target_file.read()
                 meta = os.path.basename(source_path)
@@ -53,9 +72,10 @@ class SourceTargetConnector(Importer):
                 source_files = [f for f in f if f.endswith(".source")]
                 for source_file in source_files:
                     target_file = source_file.replace(".source", ".target")
-                    with open(os.path.join(root, source_file), "r") as s, open(
-                        os.path.join(root, target_file), "r"
-                    ) as t:
+                    with (
+                        open(os.path.join(root, source_file), "r") as s,
+                        open(os.path.join(root, target_file), "r") as t,
+                    ):
                         source = s.read()
                         target = t.read()
                         meta = os.path.basename(source_file)

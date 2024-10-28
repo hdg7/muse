@@ -4,27 +4,37 @@ import torch
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 from muse.summarizer.summarizer import Summarizer
+from muse.utils.decorators import with_valid_options
 
 
 class CrossSum(Summarizer):
-    def __init__(self, params):
-        super().__init__(params)
-        if params is None:
-            params = {}
-
-        self.model_name = params.get("model_name", "csebuetnlp/mT5_m2m_crossSum")
+    @with_valid_options(
+        model_name={
+            "type": str,
+            "default": "csebuetnlp/mT5_m2m_crossSum",
+            "help": "The model name to use",
+        },
+        device={
+            "type": str,
+            "default": "cuda" if torch.cuda.is_available() else "cpu",
+            "help": "The device to use",
+        },
+    )
+    def __init__(self, options):
+        if not options:
+            options = {}
+        self.model_name = options.get("model_name", "csebuetnlp/mT5_m2m_crossSum")
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, use_fast=False)
         self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model_name)
-        self.device = params.get(
+        self.device = options.get(
             "device", "cuda" if torch.cuda.is_available() else "cpu"
         )
         self.model.to(self.device)
         self.get_lang_id = lambda lang: self.tokenizer._convert_token_to_id(
-                self.model.config.task_specific_params["langid_map"][lang][1]
-            )
+            self.model.config.task_specific_params["langid_map"][lang][1]
+        )
 
-        self.target_lang = "english" # for a list of available language names see below
-        
+        self.target_lang = "english"  # for a list of available language names see below
 
     def summarize(self, texts) -> list[str]:
         if isinstance(texts, list):
@@ -42,7 +52,11 @@ class CrossSum(Summarizer):
         )["input_ids"].to(self.device)
 
         output_ids = self.model.generate(
-            input_ids=input_ids, decoder_start_token_id=self.get_lang_id(self.target_lang),max_length=84, no_repeat_ngram_size=2, num_beams=4
+            input_ids=input_ids,
+            decoder_start_token_id=self.get_lang_id(self.target_lang),
+            max_length=84,
+            no_repeat_ngram_size=2,
+            num_beams=4,
         )[0]
 
         summary = self.tokenizer.decode(

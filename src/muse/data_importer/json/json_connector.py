@@ -6,6 +6,7 @@ from muse.data_importer.fetcher import get_resource_type, handle_uri
 from muse.data_manager.conversation.conversation import Conversation, TextUnit
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
+from muse.utils.decorators import with_valid_options
 from muse.utils.resource_errors import InvalidResourceError
 
 
@@ -16,6 +17,7 @@ class JSONConnector(Importer):
     It can also be used to import subdata, i.e. data stored as json within other structures such as CSV files.
     """
 
+    @with_valid_options()
     def __init__(self, options: dict[str, any] = None):
         pass
 

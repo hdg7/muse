@@ -1,6 +1,7 @@
 from rouge import Rouge
 
 from muse.evaluation.evaluation import Evaluation
+from muse.utils.decorators import with_valid_options
 
 
 class RougeMetric(Evaluation):
@@ -10,9 +11,14 @@ class RougeMetric(Evaluation):
     ROUGE only applies to comparing summaries and reference summaries
     """
 
-    def __init__(self, params):
+    @with_valid_options(
+        avg={"type": bool, "default": False, "help": "Whether to average the scores"}
+    )
+    def __init__(self, options):
+        if not options:
+            options = {}
         self.rouge = Rouge()
-        self.avg = params.get("avg", False)
+        self.avg = options.get("avg", False)
 
     def evaluate(
         self, summary, reference_text=None, reference_summary=None

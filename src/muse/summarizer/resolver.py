@@ -32,4 +32,24 @@ def get_available_summarizers() -> list[str]:
     return [importer.__name__ for importer in Summarizer.__subclasses__()]
 
 
+def get_summarizers_options() -> list[tuple[str, dict[str, any]]]:
+    """
+    Get the options for all the available summarizers.
+
+    :return: List of tuples containing the name of the summarizer and its options.
+    """
+
+    return [
+        (
+            importer.__name__,
+            (
+                importer.__init__.valid_options()
+                if hasattr(importer.__init__, "valid_options")
+                else {}
+            ),
+        )
+        for importer in Summarizer.__subclasses__()
+    ]
+
+
 import_from_plugin("summarizers", Summarizer, "summarizer", "summarizer", "summarizers")

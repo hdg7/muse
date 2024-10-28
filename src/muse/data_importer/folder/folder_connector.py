@@ -10,6 +10,7 @@ from muse.data_importer.json.json_connector import JSONConnector
 from muse.data_manager.conversation.conversation import Conversation, TextUnit
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
+from muse.utils.decorators import with_valid_options
 from muse.utils.resource_errors import InvalidResourceError
 
 
@@ -29,6 +30,38 @@ class FolderConnector(Importer):
         encoded within the resource_name, along with any other relevant information, such as the speaker.
     """
 
+    @with_valid_options(
+        summary_suffix={
+            "type": str,
+            "default": "_summary",
+            "help": "The suffix for the summary file.",
+        },
+        metadata_suffix={
+            "type": str,
+            "default": "_metadata",
+            "help": "The suffix for the metadata file.",
+        },
+        summary_file={
+            "type": str,
+            "default": "summary",
+            "help": "The name of the summary file.",
+        },
+        metadata_file={
+            "type": str,
+            "default": "metadata",
+            "help": "The name of the metadata file.",
+        },
+        multi_document_delimiter={
+            "type": str,
+            "default": "#DOCUMENT#",
+            "help": "The delimiter for multi documents (used within the column to separate documents).",
+        },
+        conversation_separator={
+            "type": str,
+            "default": r"#\w+#",
+            "help": "The regex to separate conversations.",
+        },
+    )
     def __init__(self, options: dict[str, any] = None):
         self._invalid_reason = None
 

@@ -34,6 +34,7 @@ Enterprise_Boundary(b0, "Muse System Boundary") {
 
             ' Summarizer Boundary
             Container_Boundary(summarizerBoundary, "Summarizer") {
+                Component(resolve_summarizer, "resolve_summarizer()", "Function", "Determines which summarizer to use.")
                 Component(summarizerABC, "Summarizer", "ABC", "Abstract base class for summarizers.")
                 Component(pytorchConnector, "PytorchConnector", "Class", "Handles summarization with PyTorch.")
                 Component(gensimConnector, "GensimConnector", "Class", "Handles summarization with Gensim.")
@@ -42,6 +43,7 @@ Enterprise_Boundary(b0, "Muse System Boundary") {
 
             ' Evaluations Boundary
             Container_Boundary(evaluationsBoundary, "Evaluations") {
+                Component(resolve_evaluator, "resolve_evaluator()", "Function", "Determines which evaluator to use.")
                 Component(evaluationABC, "Evaluation", "ABC", "Abstract base class for evaluations.")
                 Component(bleu, "Bleu", "Class", "Handles BLEU evaluation.")
                 Component(meteor, "Meteor", "Class", "Handles Meteor evaluation.")
@@ -76,14 +78,21 @@ Rel(importerABC, columnarImporter, "Implemented by ColumnarImporter")
 Rel(importerABC, folderImporter, "Implemented by FolderImporter")
 Rel(importerABC, jsonImporter, "Implemented by JSONImporter")
 Rel(importerABC, sourceTargetImporter, "Implemented by SourceTargetImporter")
-Rel(muse, summarizerABC, "Passes imported data to generate summaries")
+
+Rel(muse, resolve_summarizer, "Uses for summarization")
+Rel(resolve_summarizer, summarizerABC, "Uses Summarizer ABC")
 Rel(summarizerABC, pytorchConnector, "Implemented by PytorchConnector")
 Rel(summarizerABC, gensimConnector, "Implemented by GensimConnector")
 Rel(summarizerABC, sumyConnector, "Implemented by SumyConnector")
-Rel(muse, evaluationABC, "Passes summary to generate evaluations")
+
+Rel(muse, resolve_evaluator, "Uses for evaluation")
+Rel(resolve_evaluator, evaluationABC, "Uses Evaluation ABC")
 Rel(evaluationABC, bleu, "Implemented by Bleu")
 Rel(evaluationABC, meteor, "Implemented by Meteor")
 Rel(evaluationABC, rouge, "Implemented by Rouge")
 Rel(evaluationABC, ollama, "Implemented by Ollama")
+
 Rel(importData, pluginSystem, "Checks for plugins")
+Rel(resolve_evaluator, pluginSystem, "Checks for plugins")
+Rel(resolve_summarizer, pluginSystem, "Checks for plugins")
 @enduml

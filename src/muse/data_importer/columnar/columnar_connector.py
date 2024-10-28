@@ -7,6 +7,7 @@ from muse.data_importer.fetcher import get_resource_type, handle_uri
 from muse.data_manager.conversation.conversation import Conversation, TextUnit
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
+from muse.utils.decorators import with_valid_options
 from muse.utils.resource_errors import InvalidResourceError
 
 
@@ -30,6 +31,43 @@ class ColumnarConnector(Importer):
             #PERSON2# I'm good, how are you?
     """
 
+    @with_valid_options(
+        text_column={
+            "type": str,
+            "default": "text",
+            "help": "The column name for the text.",
+        },
+        summary_column={
+            "type": str,
+            "default": "summary",
+            "help": "The column name for the summary.",
+        },
+        metadata_columns={
+            "type": list[str],
+            "default": [],
+            "help": "The column names for the metadata. If an empty list, all columns except text and summary are considered metadata.",
+        },
+        csv_separator={
+            "type": str,
+            "default": ",",
+            "help": "The separator for the csv file.",
+        },
+        multi_doc_id_column={
+            "type": str,
+            "default": "multi_doc_id",
+            "help": "The column name for the multi document id.",
+        },
+        multi_document_delimiter={
+            "type": str,
+            "default": "#DOCUMENT#",
+            "help": "The delimiter for multi documents (used within the column to separate documents).",
+        },
+        conversation_separator={
+            "type": str,
+            "default": r"#\w+#",
+            "help": "The regex to separate conversations.",
+        },
+    )
     def __init__(self, options: dict[str, any] = None):
         self._invalid_reason = None
 

@@ -33,4 +33,24 @@ def get_available_evaluators() -> list[str]:
     return [importer.__name__ for importer in Evaluation.__subclasses__()]
 
 
+def get_evaluators_options() -> list[tuple[str, dict[str, any]]]:
+    """
+    Get the options for all the available evaluation metrics.
+
+    :return: List of tuples containing the name of the evaluation metric and its options.
+    """
+
+    return [
+        (
+            importer.__name__,
+            (
+                importer.__init__.valid_options()
+                if hasattr(importer.__init__, "valid_options")
+                else {}
+            ),
+        )
+        for importer in Evaluation.__subclasses__()
+    ]
+
+
 import_from_plugin("evaluations", Evaluation, "evaluation", "evaluator", "evaluators")

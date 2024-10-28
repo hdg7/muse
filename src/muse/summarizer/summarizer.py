@@ -12,6 +12,7 @@ class Summarizer(ABC):
 
     plugin = False
 
+    @abstractmethod
     def __init__(self, params: dict[str, any]):
         """
         Constructor for the Summarizer class

@@ -275,5 +275,5 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/jupyternotebooks,python,jetbrains+all
 
 # Ignore mounted volumes from the compose
-plugins/
-outputs/
+./plugins/
+./outputs/

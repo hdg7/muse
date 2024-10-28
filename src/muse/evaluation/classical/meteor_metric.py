@@ -2,6 +2,7 @@ from nltk import download, word_tokenize
 from nltk.translate import meteor
 
 from muse.evaluation.evaluation import Evaluation
+from muse.utils.decorators import with_valid_options
 
 
 class MeteorMetric(Evaluation):
@@ -11,7 +12,10 @@ class MeteorMetric(Evaluation):
     METEOR only applies to comparing summaries and reference summaries
     """
 
-    def __init__(self, params):
+    @with_valid_options()
+    def __init__(self, options):
+        if not options:
+            options = {}
         download("wordnet")
         download("punkt_tab")
 

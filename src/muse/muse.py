@@ -9,11 +9,19 @@ from muse.data_manager.conversation.conversation import Conversation
 from muse.data_manager.document.document import Document
 from muse.data_manager.multi_document.multi_document import MultiDocument
 from muse.evaluation.evaluation import Evaluation
-from muse.evaluation.resolver import resolve_evaluator, get_available_evaluators
+from muse.evaluation.resolver import get_available_evaluators, resolve_evaluator
 from muse.summarizer.resolver import get_available_summarizers, resolve_summarizer
 from muse.summarizer.summarizer import Summarizer
+from muse.utils.decorators import with_valid_options
 
-__all__ = ["SummarizerSystem", "EvaluationSystem", "DataType", "Options", "Muse", "main"]
+__all__ = [
+    "SummarizerSystem",
+    "EvaluationSystem",
+    "DataType",
+    "Options",
+    "Muse",
+    "main",
+]
 
 
 class DataType(Enum):
@@ -87,11 +95,18 @@ def evaluate_metric(options: Options) -> None:
         raise ValueError("No data type specified")
 
     muse = Muse(options)
-    muse.set_data(options["data_type"], options["data"], options["language"], config)
-    # TODO: Add support for option passing to summarizer and evaluation too, we will just need to
-    #       check the config for names corresponding to the summarizer and evaluation methods selected
-    muse.add_summarizer(*options["system"])
-    muse.add_evaluation(*options["metrics"])
+    muse.set_data(
+        options["data_type"],
+        options["data"],
+        options["language"],
+        config["data_importer_options"],
+    )
+    muse.add_summarizer(
+        *[(s, config["summarizer_options"].get(s, {})) for s in options["system"]]
+    )
+    muse.add_evaluation(
+        *[(m, config["evaluation_options"].get(m, {})) for m in options["metrics"]]
+    )
     results = muse.run()
     if options["output"]:
         os.makedirs(options["output"], exist_ok=True)
@@ -110,7 +125,15 @@ def evaluate_metric(options: Options) -> None:
 
 
 class Muse:
-    def __init__(self, options: Options):
+    @with_valid_options(
+        use_cache={"type": bool, "default": False, "help": "Use cached summaries"},
+        output={
+            "type": str,
+            "default": None,
+            "help": "Output directory to save results, if none, results are printed",
+        },
+    )
+    def __init__(self, options: Options = None):
         self.summarizers: list[Summarizer] = []
         self.evaluations: list[Evaluation] = []
         self.data: (
@@ -118,8 +141,8 @@ class Muse:
         ) = None
 
         self.results: dict[str, dict[str, any]] = {}
-        self.use_cache = options["use_cache"]
-        self.cache_dir = options["output"]
+        self.use_cache = options.get("use_cache", False)
+        self.cache_dir = options.get("output", None)
         self.summaries: dict[str, list[str]] = {}
 
     def set_data(

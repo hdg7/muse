@@ -4,18 +4,29 @@ import torch
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 from muse.summarizer.summarizer import Summarizer
+from muse.utils.decorators import with_valid_options
 
 
 class MT5(Summarizer):
-    def __init__(self, params):
-        super().__init__(params)
-        if params is None:
-            params = {}
-
-        self.model_name = params.get("model_name", "csebuetnlp/mT5_multilingual_XLSum")
+    @with_valid_options(
+        model_name={
+            "type": str,
+            "default": "csebuetnlp/mT5_multilingual_XLSum",
+            "help": "The model name to use",
+        },
+        device={
+            "type": str,
+            "default": "cuda" if torch.cuda.is_available() else "cpu",
+            "help": "The device to use",
+        },
+    )
+    def __init__(self, options):
+        if not options:
+            options = {}
+        self.model_name = options.get("model_name", "csebuetnlp/mT5_multilingual_XLSum")
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
         self.model = AutoModelForSeq2SeqLM.from_pretrained(self.model_name)
-        self.device = params.get(
+        self.device = options.get(
             "device", "cuda" if torch.cuda.is_available() else "cpu"
         )
         self.model.to(self.device)
