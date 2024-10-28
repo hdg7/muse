@@ -3,7 +3,9 @@ from muse.utils.plugins import import_from_plugin
 from muse.utils.resource_errors import UnknownResourceError
 
 
-def resolve_summarizer(summarizer_system: str, options: dict[str, any] = None) -> Summarizer:
+def resolve_summarizer(
+    summarizer_system: str, options: dict[str, any] = None
+) -> Summarizer:
     """
     Import summarizer using the plugins.
 

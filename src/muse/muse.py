@@ -99,13 +99,19 @@ def evaluate_metric(options: Options) -> None:
         options["data_type"],
         options["data"],
         options["language"],
-        config["data_importer_options"],
+        config.get("data_importer_options", {}),
     )
     muse.add_summarizer(
-        *[(s, config["summarizer_options"].get(s, {})) for s in options["system"]]
+        *[
+            (s, config.get("summarizer_options", {}).get(s, {}))
+            for s in options["system"]
+        ]
     )
     muse.add_evaluation(
-        *[(m, config["evaluation_options"].get(m, {})) for m in options["metrics"]]
+        *[
+            (m, config.get("evaluation_options", {}).get(m, {}))
+            for m in options["metrics"]
+        ]
     )
     results = muse.run()
     if options["output"]:

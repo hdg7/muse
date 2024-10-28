@@ -1,22 +1,37 @@
-from transformers import pipeline
 import torch
+from transformers import pipeline
 
 from muse.summarizer.summarizer import Summarizer
+from muse.utils.decorators import with_valid_options
+
 
 class FalconsAI(Summarizer):
-    def __init__(self, params):
-        super().__init__(params)
-        self.device = params.get(
+    @with_valid_options(
+        device={
+            "type": str,
+            "default": "cuda" if torch.cuda.is_available() else "cpu",
+            "help": "The device to use",
+        },
+    )
+    def __init__(self, options: dict[str, any]):
+        if options is None:
+            options = {}
+        self.device = options.get(
             "device", "cuda" if torch.cuda.is_available() else "cpu"
         )
         if self.device == "cuda":
             try:
-                self.summarizer = pipeline("summarization", model="Falconsai/text_summarization",device=0)
+                self.summarizer = pipeline(
+                    "summarization", model="Falconsai/text_summarization", device=0
+                )
             except:
-                self.summarizer = pipeline("summarization", model="Falconsai/text_summarization")
+                self.summarizer = pipeline(
+                    "summarization", model="Falconsai/text_summarization"
+                )
         else:
-            self.summarizer = pipeline("summarization", model="Falconsai/text_summarization")
-
+            self.summarizer = pipeline(
+                "summarization", model="Falconsai/text_summarization"
+            )
 
     def summarize(self, texts) -> list[str]:
         if isinstance(texts, list):
