@@ -3,24 +3,24 @@ from muse.utils.plugins import import_from_plugin
 from muse.utils.resource_errors import UnknownResourceError
 
 
-def resolve_evaluator(evaluation: str, options: dict[str, any] = None) -> Evaluation:
+def resolve_evaluator(evaluation_metric: str, options: dict[str, any] = None) -> Evaluation:
     """
     Import an evaluation metric using the plugins.
 
-    :param evaluation: The evaluation metric to import.
+    :param evaluation_metric: The evaluation metric to import.
     :param options: Options to initialize the evaluation metric.
     :return: The evaluation metric.
     :raises UnknownResourceError: If the evaluation metric is not found.
     """
 
-    importers = Evaluation.__subclasses__()
-    importers.sort(key=lambda x: x.plugin, reverse=True)
-    for importer in importers:
-        possible_names = [evaluation.lower(), f"{evaluation}Metric".lower()]
-        if importer.__name__.lower() in possible_names:
-            return importer(options)
+    evaluations = Evaluation.__subclasses__()
+    evaluations.sort(key=lambda x: x.plugin, reverse=True)
+    for evaluation in evaluations:
+        possible_names = [str(evaluation_metric).lower(), f"{evaluation_metric}Metric".lower()]
+        if evaluation.__name__.lower() in possible_names:
+            return evaluation(options)
 
-    raise UnknownResourceError(evaluation)
+    raise UnknownResourceError(evaluation_metric)
 
 
 def get_available_evaluators() -> list[str]:
