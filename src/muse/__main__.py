@@ -28,7 +28,9 @@ class ArgumentParser(SuperArgParser):
             "\tThe following is the options available for the configuration:\n"
             "\t\tData Importer:\n"
             f"{format_options(get_importers_options())}"
+            "\t\tSummarizer:\n"
             f"{format_options(get_summarizers_options())}"
+            "\t\tEvaluation System:\n"
             f"{format_options(get_evaluators_options())}"
         )
 
