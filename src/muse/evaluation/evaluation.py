@@ -33,3 +33,14 @@ class Evaluation(ABC):
         :return: The evaluation results
         """
         pass
+
+    @classmethod
+    def valid_options(cls):
+        """
+        Get the valid options for the Evaluation metric
+
+        :return: The valid options for the Evaluation metric
+        """
+        if not hasattr(cls.__init__, "valid_options"):
+            return {}
+        return cls.__init__.valid_options()

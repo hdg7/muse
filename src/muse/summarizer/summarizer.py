@@ -28,3 +28,14 @@ class Summarizer(ABC):
         :return: The summarized text
         """
         pass
+
+    @classmethod
+    def valid_options(cls):
+        """
+        Get the valid options for the summarizer
+
+        :return: The valid options for the summarizer
+        """
+        if not hasattr(cls.__init__, "valid_options"):
+            return {}
+        return cls.__init__.valid_options()

@@ -57,6 +57,17 @@ class Importer(ABC):
         """
         pass
 
+    @classmethod
+    def valid_options(cls):
+        """
+        Get the valid options for the data importer.
+
+        :return: The valid options for the data importer.
+        """
+        if not hasattr(cls.__init__, "valid_options"):
+            return {}
+        return cls.__init__.valid_options()
+
 
 def split_text_by_regex(text, regex):
     """
