@@ -9,5 +9,7 @@ def test_summarize():
     )
     spacy = Spacy({})
     summary = spacy.summarize([text])
-    assert str(summary[0]) == "This is a long text that needs to be summarized. Maybe we can try to write something a little bit longer. It is very long and boring."
-
+    assert (
+        str(summary[0])
+        == "This is a long text that needs to be summarized. Maybe we can try to write something a little bit longer. It is very long and boring."
+    )
