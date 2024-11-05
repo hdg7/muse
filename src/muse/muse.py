@@ -146,6 +146,9 @@ class Muse:
             Union[list[Document], list[MultiDocument], list[Conversation]] | None
         ) = None
 
+        if options is None:
+            options = {}
+
         self.results: dict[str, dict[str, any]] = {}
         self.use_cache = options.get("use_cache", False)
         self.cache_dir = options.get("output", None)

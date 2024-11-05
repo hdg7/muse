@@ -29,12 +29,14 @@ class JSONConnector(Importer):
         with open(data_path, "r") as file:
             data = json.load(file)
 
+        data = data.get("data", data)
+
         return self._import_data(data, document_type)
 
     def check_data(self, data_path, document_type):
         data_path = handle_uri(data_path)
         data_type = get_resource_type(data_path)
-        if data_type != "file":
+        if data_type != "file" and data_type != "json":
             return False
 
         try:
@@ -49,6 +51,8 @@ class JSONConnector(Importer):
             return False
 
     def _import_data(self, data, document_type):
+        if not isinstance(data, list):
+            data = [data]
         if document_type == "document":
             return self._import_document(data)
         elif document_type == "multi-document":
