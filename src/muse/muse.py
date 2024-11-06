@@ -95,6 +95,8 @@ def evaluate_metric(options: Options) -> None:
         raise ValueError("No data type specified")
 
     muse = Muse(options)
+    
+    for s in options["system"]:
     muse.set_data(
         options["data_type"],
         options["data"],
@@ -103,7 +105,7 @@ def evaluate_metric(options: Options) -> None:
     )
     muse.add_summarizer(
         *[
-            (s, config.get("summarizer_options", {}).get(s, {}))
+            (s, config.get("summarizer_options", {}).get(str(s), {}))
             for s in options["system"]
         ]
     )
@@ -236,7 +238,6 @@ def main(options: Options | Namespace) -> int:
             "language": options.language,
             "use_cache": options.use_cache,
         }
-
     options = cast(Options, options)
 
     try:
