@@ -96,7 +96,6 @@ def evaluate_metric(options: Options) -> None:
 
     muse = Muse(options)
     
-    for s in options["system"]:
     muse.set_data(
         options["data_type"],
         options["data"],
@@ -111,7 +110,7 @@ def evaluate_metric(options: Options) -> None:
     )
     muse.add_evaluation(
         *[
-            (m, config.get("evaluation_options", {}).get(m, {}))
+            (m, config.get("evaluation_options", {}).get(str(m), {}))
             for m in options["metrics"]
         ]
     )
