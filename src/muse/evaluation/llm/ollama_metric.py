@@ -163,9 +163,9 @@ class OllamaMetric(Evaluation):
         density = self.calculate_density(key_fact_correspondence)
 
         return {
-            "factuality": factuality,
-            "completeness": completeness,
-            "density": density,
+            "factuality": float(factuality),
+            "completeness": float(completeness),
+            "density": float(density),
             "key_fact_correspondence": key_fact_correspondence,
             "reference_key_facts": reference_key_facts,
             "summary_key_facts": summary_key_facts,
@@ -218,7 +218,7 @@ class OllamaMetric(Evaluation):
         #   (None, "z", None)
         # ]
 
-        pairs = [(x, y, self.get_similarity(x, y)) for x in f for y in g]
+        pairs = [(x, y, float(self.get_similarity(x, y))) for x in f for y in g]
 
         if self.similarity_pair_method == "max":
             for source_fact in f:
