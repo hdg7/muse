@@ -1,17 +1,69 @@
 # MuSE
 
+Multilingual Summarization Evaluation (MuSE) is a tool for evaluating summarization systems across multiple languages.
+MuSE supports multiple domains, including single document, multi-document, and conversations.
+
+## Usage
+
+Muse can be used as a command line tool or as a python library, examples of this can be found in the [tutorial](./tutorial/README.md) folder.
+
+Muse supports natively the following summarization systems:
+- crossSum
+- falconsAI
+- mT5
+- spacy
+- sumy
+
+And the following evaluation metrics:
+- bertScore
+- bleu
+- meteor
+- rouge
+- ollama (our own metric utilising llms via ollama)
+
+We also provide a notebook server through the docker interface.
+
+## Example of CLI
+
+The following command will evaluate the sumy summarization system on the document domain using the rouge metric and the english language:
+
+```bash
+muse -s sumy -t document -d ./examples/ -m rougemetric -l en
+````
+
+## Pre-requisites
+
+In order to use MuSE, you will need ollama installed. You can find the instructions for installing ollama [here](https://ollama.com/install.sh).
+
+You can then clone the repository with:
+
+```bash
+git clone git@github.com:hdg7/muse.git
+```
+
+and you can then install the requirements with:
+
+```bash
+pip install -r requirements.txt
+```
+
+You can also optionally install the development requirements with:
+
+```bash
+pip install -r optional-requirements.txt
+```
 
 ## Installation
 
-To install the package, you can run:
+To install the package, once you have cloned the repository, you can run the install script with:
 
 ```bash
 ./install.bash
 ````
 
-## Developing
+_TODO: Add instructions for installing the package from pypi._
 
-### Docker
+## Docker
 
 Build the docker image with:
 
@@ -19,41 +71,13 @@ Build the docker image with:
 docker build -t muse .
 ```
 
-Run the docker image in development mode, which will start the jupyter notebook, and drop you into a shell. This can be done with:
+Run the docker image in development mode with:
 
 ```bash
 docker run --gpus all muse -p 8888:8888
 ```
 
-Or you can use the develop command directly when running the docker image:
-
-```bash
-docker run --gpus all  muse -p 8888:8888 develop
-```
-
-You can run all the tests with:
-    
-```bash
-docker run --gpus all  muse -p 8888:8888 test
-```
-
-If you want to run a shell and not the jupyter notebook, you can run:
-
-```bash
-docker run --gpus all muse -p 8888:8888 debug
-```
-
-You can run the deployment mode to just run the jupyter notebook with:
-
-```bash
-docker run --gpus all muse -p 8888:8888 deploy
-```
-
-Alternatively, you can use the `docker-compose` command to start the deployment mode with:
-
-```bash
-docker-compose up --build
-```
+Alternatively, you can use the `docker compose` command to start the deployment mode with:
 
 Or, if you have the compose plugin:
 
