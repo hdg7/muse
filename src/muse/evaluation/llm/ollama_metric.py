@@ -62,7 +62,7 @@ class OllamaMetric(Evaluation):
         if not options:
             options = {}
 
-        self.key_fact_model = options.get("key_facts_model", "tinyllama")
+        self.key_fact_model = options.get("key_facts_model", "mistral-small")
         self.similarity_model = options.get(
             "similarity_model",
             "sentence-transformers/distiluse-base-multilingual-cased-v1",
