@@ -26,7 +26,7 @@ class Spacy(Summarizer):
         try:
             self.nlp = spacy.load(ln)
         except:
-            spacy.cli.download(ln)
+            spacy.cli.download(ln,  False, False, "--break-system-packages")
             self.nlp = spacy.load(ln)
 
     def summarize(self, texts) -> list[str]:
