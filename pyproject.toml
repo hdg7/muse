@@ -33,7 +33,9 @@ muse_fetch = "muse.__main__:fetch"
 
 [tool.hatch.envs.default]
 dependencies = [
+    "coverage[toml]",
     "pytest",
+    "pytest-cov",
     "black",
     "isort",
 ]
@@ -44,6 +46,8 @@ format = [
     "black .",
     "isort ."
 ]
+cov = 'pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=pkg --cov=tests'
+
 
 [tool.black]
 line-length = 88
