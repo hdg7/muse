@@ -1,4 +1,6 @@
 import ollama
+import numpy as np
+import re
 from scipy.spatial.distance import cosine
 from sentence_transformers import SentenceTransformer
 
@@ -62,7 +64,9 @@ class OllamaMetric(Evaluation):
         if not options:
             options = {}
 
-        self.key_fact_model = options.get("key_facts_model", "mistral-small")
+        self.score_method = np.mean
+
+        self.key_fact_model = options.get("key_facts_model", "tinyllama")
         self.similarity_model = options.get(
             "similarity_model",
             "sentence-transformers/distiluse-base-multilingual-cased-v1",
@@ -163,6 +167,7 @@ class OllamaMetric(Evaluation):
         density = self.calculate_density(key_fact_correspondence)
 
         return {
+            "score": self.score_method([float(factuality), float(completeness), float(density)]),
             "factuality": float(factuality),
             "completeness": float(completeness),
             "density": float(density),
@@ -184,8 +189,23 @@ class OllamaMetric(Evaluation):
         ]
 
     def get_key_facts(self, text: str) -> list[str]:
-        prompt = f"From the following text, generate a list of keyfacts, in bullet points, each should only be around a single sentence, and concise. \n\n{text}"
+        prompt = (
+            f"Extract a list of the key factual information (key facts) from the following text. "
+            f"Each fact should be a single concise sentence separated by newlines. "
+            f"Do not include any extra commentary or text, return only the key facts in the list. "
+            f"Ensure there are no additional elements or formatting is in the response."
+            f"\n\n{text}"
+        )
         response = self._query_model(self.key_fact_model, prompt)["response"]
+        response = re.sub(r"^\s*[\•\-\*\d]+[\s\.)]*", "", response, flags=re.MULTILINE)
+        response = re.sub(r'<[^>]*>.*?</[^>]*>', '', response)
+        response = re.sub(r'\[.*?\]', '', response)
+        response_lines = response.split("\n")
+        if response_lines:
+            response_lines[0] = re.sub(r'^[^:\n]*?:\s*', '', response_lines[0])
+
+        response = "\n".join(response_lines)
+
         return [
             x.strip().lstrip("•").lstrip("1234567890").strip()
             for x in response.split("\n")
@@ -193,31 +213,6 @@ class OllamaMetric(Evaluation):
         ]
 
     def get_key_fact_correspondence(self, f: list[str], g: list[str]) -> list[tuple]:
-        # Combine by the threshold
-        # If we have the following:
-        # f = ["ae", "b", "c", "d", "e", "f"]
-        # g = ["a", "d", "e", "z"]
-        # and the threshold is 0.5
-        # We would get the following:
-        # a -> ae = 0.5
-        # a -> b, a -> c, a -> d, a -> e, a -> f = 0
-        # d -> ae, d -> b, d -> c, d -> e, d -> f = 0
-        # d -> d = 1
-        # e -> ae = 0.5
-        # e -> b, e -> c, e -> d, e -> f = 0
-        # e -> e = 1
-        # z -> ae, z -> b, z -> c, z -> d, z -> e, z -> f = 0
-        # So we take the f -> g of the max at the moment
-        # So we would get the following:
-        # [ ("ae", "a", sim("ae", "a"),
-        #   ("b", None, None),
-        #   ("c", None, None),
-        #   ("d", "d", sim("d", "d")),
-        #   ("e", "e", sim("e", "e")),
-        #   ("f", None, None),
-        #   (None, "z", None)
-        # ]
-
         pairs = [(x, y, float(self.get_similarity(x, y))) for x in f for y in g]
 
         if self.similarity_pair_method == "max":
