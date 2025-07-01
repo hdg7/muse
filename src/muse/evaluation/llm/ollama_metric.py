@@ -198,7 +198,7 @@ class OllamaMetric(Evaluation):
         )
         response = self._query_model(self.key_fact_model, prompt)["response"]
         response = re.sub(r"^\s*[\•\-\*\d]+[\s\.)]*", "", response, flags=re.MULTILINE)
-        result = re.sub(r'<(\w+)>(.*?)</\1>', '', text, flags=re.DOTALL)
+        response = re.sub(r'<(\w+)>(.*?)</\1>', '', response, flags=re.DOTALL)
         response = re.sub(r'\[.*?\]', '', response)
         response_lines = response.split("\n")
         if response_lines:
