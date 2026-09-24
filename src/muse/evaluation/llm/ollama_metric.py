@@ -188,63 +188,157 @@ class OllamaMetric(Evaluation):
             for i in range(len(summary))
         ]
 
-    def get_key_facts(self, text: str) -> list[str]:
+    def get_key_facts(self, text: str) -> list:
+        if text is None or not str(text).strip():
+            return []
+
         prompt = (
-            f"Extract a list of the key factual information (key facts) from the following text. "
-            f"Each fact should be a single concise sentence separated by newlines. "
-            f"Do not include any extra commentary or text, return only the key facts in the list. "
-            f"Ensure there are no additional elements or formatting is in the response."
-            f"\n\n{text}"
+            "Extract the key factual information from the following text.\n"
+            "Return one concise fact per line.\n"
+            "Do not use bullets, numbering, headings, XML tags, explanations, "
+            "or additional commentary.\n"
+            "Write the facts in the same language as the input text.\n\n"
+            f"{text}"
         )
-        response = self._query_model(self.key_fact_model, prompt)["response"]
-        response = re.sub(r"^\s*[\•\-\*\d]+[\s\.)]*", "", response, flags=re.MULTILINE)
-        response = re.sub(r'<(\w+)>(.*?)</\1>', '', response, flags=re.DOTALL)
-        response = re.sub(r'\[.*?\]', '', response)
-        response_lines = response.split("\n")
-        if response_lines:
-            response_lines[0] = re.sub(r'^[^:\n]*?:\s*', '', response_lines[0])
 
-        response = "\n".join(response_lines)
+        model_response = self._query_model(self.key_fact_model, prompt)
 
-        return [
-            x.strip().lstrip("•").lstrip("1234567890").strip()
-            for x in response.split("\n")
-            if x
+        if isinstance(model_response, dict):
+            response = model_response.get("response", "")
+        else:
+            response = getattr(model_response, "response", "")
+
+        if not response or not str(response).strip():
+            return []
+
+        response = str(response)
+
+        # Remove DeepSeek-style reasoning blocks.
+        response = re.sub(
+            r"<think>.*?</think>",
+            "",
+            response,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+
+        # Remove other paired XML-like blocks.
+        response = re.sub(
+            r"<(\w+)>.*?</\1>",
+            "",
+            response,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+
+        # Remove common Markdown list prefixes.
+        response = re.sub(
+            r"^\s*(?:[-*•]|\d+[\.)])\s*",
+            "",
+            response,
+            flags=re.MULTILINE,
+        )
+
+        facts = []
+
+        for line in response.splitlines():
+            fact = line.strip()
+
+            if not fact:
+                continue
+
+            # Remove a possible introductory heading.
+            if not facts and ":" in fact:
+                prefix, content = fact.split(":", 1)
+
+                common_headings = {
+                    "key facts",
+                    "facts",
+                    "key factual information",
+                    "الحقائق الرئيسية",
+                    "الحقائق",
+                    "المعلومات الرئيسية",
+                }
+
+                if prefix.strip().lower() in common_headings:
+                    fact = content.strip()
+
+            if fact:
+                facts.append(fact)
+
+        return facts
+
+
+    def get_key_fact_correspondence(
+            self,
+            f: list[str],
+            g: list[str],
+    ) -> list:
+        source_facts = [
+            str(fact).strip()
+            for fact in (f or [])
+            if fact is not None and str(fact).strip()
         ]
 
-    def get_key_fact_correspondence(self, f: list[str], g: list[str]) -> list[tuple]:
-        pairs = [(x, y, float(self.get_similarity(x, y))) for x in f for y in g]
+        target_facts = [
+            str(fact).strip()
+            for fact in (g or [])
+            if fact is not None and str(fact).strip()
+        ]
 
-        if self.similarity_pair_method == "max":
-            for source_fact in f:
-                max_sim = max([pair[2] for pair in pairs if pair[0] == source_fact])
-                max_pair = [
-                    pair
-                    for pair in pairs
-                    if pair[0] == source_fact and pair[2] == max_sim
-                ][0]
-                pairs = [pair for pair in pairs if pair[0] != source_fact]
-                pairs.append(max_pair)
-            pairs = [
-                (
-                    pair[0],
-                    (
-                        None
-                        if pair[2] is not None and pair[2] < self.similarity_threshold
-                        else pair[1]
-                    ),
-                    (
-                        None
-                        if pair[2] is not None and pair[2] < self.similarity_threshold
-                        else pair[2]
-                    ),
-                )
-                for pair in pairs
+        # No reference facts means there is nothing to compare.
+        if not source_facts:
+            return []
+
+        # Reference facts exist, but the evaluated summary yielded no facts.
+        # Record every reference fact as unmatched.
+        if not target_facts:
+            return [
+                (source_fact, None, None)
+                for source_fact in source_facts
             ]
-        else:
-            raise ValueError("The similarity pair method is not valid")
 
-        return pairs
+        if self.similarity_pair_method != "max":
+            raise ValueError(
+                f"Invalid similarity pair method: "
+                f"{self.similarity_pair_method!r}"
+            )
+
+        correspondence = []
+
+        for source_fact in source_facts:
+            candidates = []
+
+            for target_fact in target_facts:
+                similarity = float(
+                    self.get_similarity(source_fact, target_fact)
+                )
+
+                # Prevent NaN values from interfering with max().
+                if np.isfinite(similarity):
+                    candidates.append(
+                        (source_fact, target_fact, similarity)
+                    )
+
+            if not candidates:
+                correspondence.append(
+                    (source_fact, None, None)
+                )
+                continue
+
+            best_pair = max(
+                candidates,
+                key=lambda pair: pair[2],
+            )
+
+            if best_pair[2] < self.similarity_threshold:
+                correspondence.append(
+                    (source_fact, None, None)
+                )
+            else:
+                correspondence.append(best_pair)
+
+        return correspondence
+
+
 
     def get_similarity(self, f: str, g: str) -> float:
         embeddings = self.model.encode([f, g])
@@ -252,7 +346,20 @@ class OllamaMetric(Evaluation):
 
     @staticmethod
     def _query_model(model, text: str):
-        response = ollama.generate(model, text)
+        response = ollama.generate(
+            model=model,
+            prompt=text,
+            think=False,
+            stream=False,
+            options={
+                "temperature": 0.2,
+                "top_p": 0.9,
+                "top_k": 40,
+                "repeat_penalty": 1.35,
+                "repeat_last_n": 128,
+                "num_predict": 512,
+            },
+        )
         return response
 
     @staticmethod

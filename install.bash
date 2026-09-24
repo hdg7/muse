@@ -17,4 +17,4 @@ then
 fi
 
 echo "Installing MuSE"
-python3 -m pip install dist/*.whl --break-system-packages --force-reinstall
+python3 -m pip install dist/*.whl --force-reinstall

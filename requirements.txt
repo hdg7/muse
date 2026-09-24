@@ -5,7 +5,7 @@ scipy==1.14.1
 rouge==1.0.1
 pandas==2.2.3
 pyarrow==18.0.0
-ollama==0.3.3
+ollama==0.5.1
 requests==2.32.3
 gitpython
 torch==2.5.0
@@ -15,4 +15,4 @@ protobuf==5.28.3
 sentence-transformers==3.2.1
 spacy==3.8.2
 bert-score==0.3.13
-
+filelock==3.24.2

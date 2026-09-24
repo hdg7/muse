@@ -15,6 +15,7 @@ RUN apt-get install -yq --fix-missing  \
     wget \
     curl  \
     screen \
+    zstd \
     python3 \
     python3-pip
 
